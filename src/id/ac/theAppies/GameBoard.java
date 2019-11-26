@@ -1,4 +1,4 @@
-package id.ac.its.amel.FP;
+package id.ac.theAppies;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
