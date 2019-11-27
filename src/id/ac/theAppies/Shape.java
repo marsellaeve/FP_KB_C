@@ -12,25 +12,30 @@ public class Shape {
     protected Image image;
 
     public Shape(int x, int y) {
-
         this.x = x;
         this.y = y;
         visible = true;
     }
 
     protected void loadImage(String imageName) {
-
         ImageIcon ii = new ImageIcon(imageName);
         image = ii.getImage();
     }
     
     protected void getImageDimensions() {
-
         width = image.getWidth(null);
         height = image.getHeight(null);
-    }    
+    }
 
-    public Image getImage() {
+    public int getWidth() {
+		return this.width;
+	}
+
+	public int getHeight() {
+		return this.height;
+	}
+
+	public Image getImage() {
         return image;
     }
 
