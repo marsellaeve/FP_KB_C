@@ -14,7 +14,7 @@ public class App extends JFrame {
         add(new Board());
 
         setTitle("The Appies");
-        setSize(800, 600);
+        setSize(800, 650);
         
         setLocationRelativeTo(null);
         setResizable(false);

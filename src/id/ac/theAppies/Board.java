@@ -23,6 +23,7 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener{
 	private boolean gameover=false;
+	private ArrayList<Level> levels;
     private ArrayList<Point> shapePlaces;
     private ArrayList<Shape> places;
     private ArrayList<Point> locations;
@@ -33,6 +34,7 @@ public class Board extends JPanel implements ActionListener{
     private ArrayList<Integer> countShapes;
     private Shape draggedImage;
     private Point mousePrevLocation;
+    private int choosedLevel;
 	
     public Board() {
         initBoard();
@@ -106,7 +108,8 @@ public class Board extends JPanel implements ActionListener{
     			}
     		}
     	});
-    	
+    	choosedLevel=1;
+    	loadLevel();
         shapePlaces = new ArrayList();
         shapePlaces.add(new Point(320,80));
         shapePlaces.add(new Point(400,80));
@@ -116,55 +119,60 @@ public class Board extends JPanel implements ActionListener{
     	availableShapes.add(new Groot(shapePlaces.get(0).x,shapePlaces.get(0).y));
     	availableShapes.add(new Smurf(shapePlaces.get(1).x,shapePlaces.get(1).y));
     	availableShapes.add(new NinjaTurtle(shapePlaces.get(2).x,shapePlaces.get(2).y));
-        
-    	countShapes=new ArrayList();
-    	countShapes.add(7);
-    	countShapes.add(1);
-    	countShapes.add(4);
-    	
-    	places=new ArrayList();
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	
-    	locations=new ArrayList();
-    	locations.add(new Point(250,300));
-    	locations.add(new Point(400,300));
-    	locations.add(new Point(400,450));
-    	locations.add(new Point(550,450));
-    	locations.add(new Point(400,225));
-    	locations.add(new Point(600,225));
-    	locations.add(new Point(250,500));
-    	locations.add(new Point(200,450));
-    	locations.add(new Point(250,400));
-    	locations.add(new Point(200,225));
-    	locations.add(new Point(500,400));
-    	locations.add(new Point(500,500));
-    	
-    	edges=new ArrayList();
-    	edges.add(new Edge(0, 1));
-    	edges.add(new Edge(0, 9));
-    	edges.add(new Edge(0, 2));
-    	edges.add(new Edge(0, 8));
-    	edges.add(new Edge(1, 2));
-    	edges.add(new Edge(1, 10));
-    	edges.add(new Edge(1, 4));
-    	edges.add(new Edge(2, 3));
-    	edges.add(new Edge(2, 7));
-    	edges.add(new Edge(3, 10));
-    	edges.add(new Edge(4, 5));
-    	edges.add(new Edge(6, 8));
-    	edges.add(new Edge(7, 8));
-    	edges.add(new Edge(10, 11));
+
+    	countShapes=levels.get(choosedLevel).getCountShapes();
+    	places=levels.get(choosedLevel).getPlaces();
+    	locations=levels.get(choosedLevel).getLocations();
+    	edges=levels.get(choosedLevel).getEdges();
+//    	countShapes=new ArrayList();
+//    	countShapes.add(7);
+//    	countShapes.add(1);
+//    	countShapes.add(4);
+//    	
+//    	places=new ArrayList();
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	places.add(null);
+//    	
+//    	locations=new ArrayList();
+//    	locations.add(new Point(250,300));
+//    	locations.add(new Point(400,300));
+//    	locations.add(new Point(400,450));
+//    	locations.add(new Point(550,450));
+//    	locations.add(new Point(400,225));
+//    	locations.add(new Point(600,225));
+//    	locations.add(new Point(250,500));
+//    	locations.add(new Point(200,450));
+//    	locations.add(new Point(250,400));
+//    	locations.add(new Point(200,225));
+//    	locations.add(new Point(500,400));
+//    	locations.add(new Point(500,500));
+//    	
+//    	edges=new ArrayList();
+//    	edges.add(new Edge(0, 1));
+//    	edges.add(new Edge(0, 9));
+//    	edges.add(new Edge(0, 2));
+//    	edges.add(new Edge(0, 8));
+//    	edges.add(new Edge(1, 2));
+//    	edges.add(new Edge(1, 10));
+//    	edges.add(new Edge(1, 4));
+//    	edges.add(new Edge(2, 3));
+//    	edges.add(new Edge(2, 7));
+//    	edges.add(new Edge(3, 10));
+//    	edges.add(new Edge(4, 5));
+//    	edges.add(new Edge(6, 8));
+//    	edges.add(new Edge(7, 8));
+//    	edges.add(new Edge(10, 11));
+//    	
     	
     	setBackground(Color.BLACK);
         setFocusable(true);
@@ -217,8 +225,12 @@ public class Board extends JPanel implements ActionListener{
         }
         
         for(int i=0;i<countShapes.size();i++) {
-        	if(countShapes.get(i)>0)g2d.drawImage(availableShapes.get(i).getImage(), availableShapes.get(i).getX()-availableShapes.get(i).getWidth()/2,
+        	if(countShapes.get(i)>0) {
+        		g2d.drawImage(availableShapes.get(i).getImage(), availableShapes.get(i).getX()-availableShapes.get(i).getWidth()/2,
         			availableShapes.get(i).getY()-availableShapes.get(i).getHeight()/2, this);
+        		g.drawString(countShapes.get(i).toString(), availableShapes.get(i).getX()-availableShapes.get(i).getWidth()/2,
+            			availableShapes.get(i).getY()-availableShapes.get(i).getHeight()/2);
+        	}
         }
         if(draggedImage!=null) {
         	g2d.drawImage(draggedImage.getImage(),draggedImage.getX()-draggedImage.getWidth()/2,
@@ -228,5 +240,387 @@ public class Board extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
         repaint();
+	}
+	
+	void loadLevel() {	
+		levels = new ArrayList();
+		countShapes=new ArrayList();
+    	countShapes.add(7);
+    	countShapes.add(1);
+    	countShapes.add(4);
+		choosedLevel=4;
+    	
+    	places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	
+    	locations=new ArrayList();
+    	locations.add(new Point(250,300));
+    	locations.add(new Point(400,300));
+    	locations.add(new Point(400,450));
+    	locations.add(new Point(550,450));
+    	locations.add(new Point(400,225));
+    	locations.add(new Point(600,225));
+    	locations.add(new Point(250,500));
+    	locations.add(new Point(200,450));
+    	locations.add(new Point(250,400));
+    	locations.add(new Point(200,225));
+    	locations.add(new Point(500,400));
+    	locations.add(new Point(500,500));
+    	
+    	edges=new ArrayList();
+    	edges.add(new Edge(0, 1));
+    	edges.add(new Edge(0, 9));
+    	edges.add(new Edge(0, 2));
+    	edges.add(new Edge(0, 8));
+    	edges.add(new Edge(1, 2));
+    	edges.add(new Edge(1, 10));
+    	edges.add(new Edge(1, 4));
+    	edges.add(new Edge(2, 3));
+    	edges.add(new Edge(2, 7));
+    	edges.add(new Edge(3, 10));
+    	edges.add(new Edge(4, 5));
+    	edges.add(new Edge(6, 8));
+    	edges.add(new Edge(7, 8));
+    	edges.add(new Edge(10, 11));
+		levels.add(new Level(places,locations,edges,countShapes));
+		
+		countShapes=new ArrayList();
+    	countShapes.add(5);
+    	countShapes.add(3);
+    	countShapes.add(4);
+    	
+        places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	
+        locations=new ArrayList();
+    	locations.add(new Point(400,200)); //0a
+    	locations.add(new Point(200,530)); //1b
+    	locations.add(new Point(600,530)); //2c
+    	locations.add(new Point(400,320)); //3d
+    	locations.add(new Point(380,480)); //4e
+    	locations.add(new Point(320,390)); //5f
+    	locations.add(new Point(480,390)); //6g
+    	locations.add(new Point(460,350)); //7h
+    	locations.add(new Point(340,450)); //8i
+    	locations.add(new Point(340,350)); //9j
+    	locations.add(new Point(460,450)); //10k
+    	locations.add(new Point(420,480)); //11L
+
+        edges=new ArrayList();
+        edges.add(new Edge(0, 1));
+        edges.add(new Edge(0, 2));
+        edges.add(new Edge(0, 3));
+        edges.add(new Edge(1, 2));
+        edges.add(new Edge(1, 8));
+        edges.add(new Edge(2, 10));
+        edges.add(new Edge(3, 7));
+        edges.add(new Edge(3, 9));
+        edges.add(new Edge(4, 7));
+        edges.add(new Edge(4, 8));
+        edges.add(new Edge(4, 11));
+        edges.add(new Edge(5, 9));
+        edges.add(new Edge(5, 6));
+        edges.add(new Edge(5, 8));
+        edges.add(new Edge(6, 7));
+        edges.add(new Edge(6, 10));
+        edges.add(new Edge(9, 11));
+        edges.add(new Edge(11, 10));
+		levels.add(new Level(places,locations,edges,countShapes));
+
+        countShapes=new ArrayList();
+    	countShapes.add(4);
+    	countShapes.add(2);
+    	countShapes.add(3);
+    	
+        places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	
+        locations=new ArrayList();
+        locations.add(new Point(270,460)); //0a
+    	locations.add(new Point(490,460)); //1b
+    	locations.add(new Point(560,410)); //2c
+    	locations.add(new Point(560,300)); //3d
+    	locations.add(new Point(220,300)); //4e
+    	locations.add(new Point(490,200)); //5f
+    	locations.add(new Point(310,260)); //6g
+    	locations.add(new Point(400,230)); //7h
+        locations.add(new Point(380,460)); //8i
+        
+        edges=new ArrayList();
+        edges.add(new Edge(0,4));
+        edges.add(new Edge(0,5));
+        edges.add(new Edge(0,8));
+        edges.add(new Edge(1,3));
+        edges.add(new Edge(1,5));
+        edges.add(new Edge(1,8));
+        edges.add(new Edge(2,3));
+        edges.add(new Edge(2,4));
+        edges.add(new Edge(2,7));
+        edges.add(new Edge(2,8));
+        edges.add(new Edge(3,4));
+        edges.add(new Edge(3,7));
+        edges.add(new Edge(4,6));
+        edges.add(new Edge(4,8));
+        edges.add(new Edge(5,7));
+        edges.add(new Edge(6,7));
+        edges.add(new Edge(6,8));
+        edges.add(new Edge(7,8));
+		levels.add(new Level(places,locations,edges,countShapes));
+		
+		countShapes=new ArrayList();
+    	countShapes.add(5);
+    	countShapes.add(4);
+    	countShapes.add(4);
+    	
+        places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	
+        locations=new ArrayList();
+        locations.add(new Point(280,470)); //0a
+    	locations.add(new Point(400,480)); //1b
+    	locations.add(new Point(520,470)); //2c
+    	locations.add(new Point(400,230)); //3d
+    	locations.add(new Point(350,430)); //4e
+    	locations.add(new Point(450,430)); //5f
+    	locations.add(new Point(330,350)); //6g
+    	locations.add(new Point(470,350)); //7h
+    	locations.add(new Point(400,300)); //8i
+    	locations.add(new Point(260,290)); //9j
+    	locations.add(new Point(540,290)); //10k
+    	locations.add(new Point(480,530)); //11l
+    	locations.add(new Point(330,530)); //12m
+        
+        edges=new ArrayList();
+        edges.add(new Edge(0,4));
+        edges.add(new Edge(0,9));
+        edges.add(new Edge(0,11));
+        edges.add(new Edge(1,8));
+        edges.add(new Edge(1,11));
+        edges.add(new Edge(1,12));
+        edges.add(new Edge(2,5));
+        edges.add(new Edge(2,10));
+        edges.add(new Edge(2,12));
+        edges.add(new Edge(3,8));
+        edges.add(new Edge(3,9));
+        edges.add(new Edge(3,10));
+        edges.add(new Edge(4,7));
+        edges.add(new Edge(4,8));
+        edges.add(new Edge(5,6));
+        edges.add(new Edge(5,8));
+        edges.add(new Edge(6,7));
+        edges.add(new Edge(6,9));
+        edges.add(new Edge(7,10));
+        edges.add(new Edge(7,11));
+        edges.add(new Edge(9,12));
+		levels.add(new Level(places,locations,edges,countShapes));
+
+		countShapes=new ArrayList();
+    	countShapes.add(4);
+    	countShapes.add(3);
+    	countShapes.add(3);
+    	
+        places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	
+        locations=new ArrayList();
+        locations.add(new Point(250,460)); //0a
+    	locations.add(new Point(350,460)); //1b
+    	locations.add(new Point(450,460)); //2c
+    	locations.add(new Point(550,460)); //3d
+    	locations.add(new Point(300,380)); //4e
+    	locations.add(new Point(400,380)); //5f
+    	locations.add(new Point(500,380)); //6g
+    	locations.add(new Point(350,300)); //7h
+    	locations.add(new Point(450,300)); //8i
+    	locations.add(new Point(400,220)); //9j
+        
+        edges=new ArrayList();
+        edges.add(new Edge(0, 1));
+        edges.add(new Edge(0, 4));
+        edges.add(new Edge(1, 4));
+        edges.add(new Edge(1, 5));
+        edges.add(new Edge(1, 2));
+        edges.add(new Edge(2, 3));
+        edges.add(new Edge(2, 5));
+        edges.add(new Edge(2, 6));
+        edges.add(new Edge(3, 6));
+        edges.add(new Edge(4, 5));
+        edges.add(new Edge(4, 7));
+        edges.add(new Edge(5, 7));
+        edges.add(new Edge(5, 8));
+        edges.add(new Edge(5, 6));
+        edges.add(new Edge(6, 8));
+        edges.add(new Edge(7, 8));
+        edges.add(new Edge(7, 9));
+        edges.add(new Edge(8, 9));
+		levels.add(new Level(places,locations,edges,countShapes));
+
+		countShapes=new ArrayList();
+    	countShapes.add(6);
+    	countShapes.add(2);
+    	countShapes.add(4);
+    	
+        places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	
+        locations=new ArrayList();
+        locations.add(new Point(320,280)); //0a
+    	locations.add(new Point(480,280)); //1b
+    	locations.add(new Point(480,440)); //2c
+    	locations.add(new Point(320,440)); //3d
+    	locations.add(new Point(400,200)); //4e
+    	locations.add(new Point(560,360)); //5f
+    	locations.add(new Point(400,520)); //6g
+    	locations.add(new Point(240,360)); //7h
+    	locations.add(new Point(280,560)); //8i
+    	locations.add(new Point(360,560)); //9j
+    	locations.add(new Point(440,560)); //10k
+    	locations.add(new Point(520,560)); //11L
+        
+        edges=new ArrayList();
+        edges.add(new Edge(0, 1));
+        edges.add(new Edge(0, 4));
+        edges.add(new Edge(0, 3));
+        edges.add(new Edge(0, 7));
+        edges.add(new Edge(1, 2));
+        edges.add(new Edge(1, 4));
+        edges.add(new Edge(1, 5));
+        edges.add(new Edge(2, 3));
+        edges.add(new Edge(2, 5));
+        edges.add(new Edge(2, 6));
+        edges.add(new Edge(2, 11));
+        edges.add(new Edge(3, 7));
+        edges.add(new Edge(3, 6));
+        edges.add(new Edge(3, 8));
+        edges.add(new Edge(9, 8));
+        edges.add(new Edge(9, 6));
+        edges.add(new Edge(10, 6));
+        edges.add(new Edge(10, 11));
+		levels.add(new Level(places,locations,edges,countShapes));
+
+		countShapes=new ArrayList();
+    	countShapes.add(5);
+    	countShapes.add(4);
+    	countShapes.add(4);
+    	
+        places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	
+        locations=new ArrayList();
+    	locations.add(new Point(300,260));//0a
+    	locations.add(new Point(300,460));//1b
+    	locations.add(new Point(500,460));//2c
+    	locations.add(new Point(500,260));//3d
+    	locations.add(new Point(540,360));//4e
+    	locations.add(new Point(400,500));//5f
+    	locations.add(new Point(260,360));//6g
+    	locations.add(new Point(400,220));//7h
+    	locations.add(new Point(400,360));//8i
+    	locations.add(new Point(460,340));//9j
+    	locations.add(new Point(460,380));//10k
+    	locations.add(new Point(340,340));//11l
+    	locations.add(new Point(340,380));//12m
+
+        edges=new ArrayList();
+        edges.add(new Edge(0, 6));
+        edges.add(new Edge(0, 1));
+        edges.add(new Edge(0, 11));
+        edges.add(new Edge(0, 8));
+        edges.add(new Edge(0, 3));
+        edges.add(new Edge(0, 7));
+        edges.add(new Edge(1, 6));
+        edges.add(new Edge(1, 12));
+        edges.add(new Edge(1, 8));
+        edges.add(new Edge(1, 2));
+        edges.add(new Edge(1, 5));
+        edges.add(new Edge(2, 4));
+        edges.add(new Edge(2, 5));
+        edges.add(new Edge(2, 3));
+        edges.add(new Edge(2, 10));
+        edges.add(new Edge(2, 8));
+        edges.add(new Edge(3, 4));
+        edges.add(new Edge(3, 7));
+        edges.add(new Edge(3, 8));
+        edges.add(new Edge(3, 9));
+        edges.add(new Edge(8, 9));
+        edges.add(new Edge(8, 10));
+        edges.add(new Edge(8, 11));
+        edges.add(new Edge(8, 12));
+		levels.add(new Level(places,locations,edges,countShapes));
+
 	}
 }
