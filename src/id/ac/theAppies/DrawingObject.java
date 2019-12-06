@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 abstract class DrawingObject {
-	private int x1,y1,x2,y2; //coordinates of shape
+	private int x1,y1,x2,y2; //coordinates of shape2
 	private Color color; // color of shape
 	public boolean reverse = false;
 	public DrawingObject(){

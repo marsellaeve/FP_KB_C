@@ -26,6 +26,12 @@ public class Shape {
         width = image.getWidth(null);
         height = image.getHeight(null);
     }
+    public void setX(int x) {
+    	this.x=x;
+    }
+    public void setY(int y) {
+    	this.y=y;
+    }
 
     public int getWidth() {
 		return this.width;
@@ -35,6 +41,12 @@ public class Shape {
 		return this.height;
 	}
 
+    public void addX(int x) {
+    	this.x+=x;
+    }
+    public void addY(int y) {
+    	this.y+=y;
+    }
 	public Image getImage() {
         return image;
     }
@@ -53,5 +65,9 @@ public class Shape {
 
     public void setVisible(Boolean visible) {
         this.visible = visible;
+    }
+    
+    public Shape clone() {
+    	return new Shape(x,y);
     }
 }
