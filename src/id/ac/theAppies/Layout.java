@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 public class Layout extends JFrame {
 	private static final String ImageObserver = null;
 //	private Component Kotak;
-	public static Canvas canvas;
+	public static Board canvas;
 	
 	public Layout (String title) {
 		super(title);
@@ -98,11 +98,6 @@ public class Layout extends JFrame {
 			if(e.getActionCommand().equals("Tanya")) {
 				canvas.HowToPlay();
 			}
-			
-			else if(e.getActionCommand().equals("Next")) {
-				canvas.NextLevel();
-			}
-			
 			else if(e.getActionCommand().equals("Reload")) {
 				canvas.Reload();
 			}
