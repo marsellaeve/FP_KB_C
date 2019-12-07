@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -29,10 +30,13 @@ public class Board extends JPanel implements ActionListener{
     private Shape draggedImage;
     private Point mousePrevLocation;
     private int choosedLevel;
-	
+    private Point nextButtonLocations;
+    private Point prevButtonLocations;
+    
     public Board() {
         initBoard();
     }
+    
     private void initBoard() {
     	this.addMouseListener(new MouseAdapter() {
     		@Override
@@ -55,6 +59,17 @@ public class Board extends JPanel implements ActionListener{
         				draggedImage=places.get(i);
         				places.set(i, null);
         			}
+    			}
+
+    			int x=nextButtonLocations.x-currentMouseLocation.x;
+    			int y=nextButtonLocations.y-currentMouseLocation.y;
+    			if(Math.sqrt(x*x+y*y)<20.0) {
+    				nextLevel();
+    			}
+    			x=prevButtonLocations.x-currentMouseLocation.x;
+    			y=prevButtonLocations.y-currentMouseLocation.y;
+    			if(Math.sqrt(x*x+y*y)<20.0) {
+    				prevLevel();
     			}
     			mousePrevLocation=currentMouseLocation;
     		}
@@ -103,21 +118,21 @@ public class Board extends JPanel implements ActionListener{
     		}
     	});
     	choosedLevel=1;
-    	loadLevel();
+    	initLevel();
         shapePlaces = new ArrayList();
         shapePlaces.add(new Point(320,80));
         shapePlaces.add(new Point(400,80));
         shapePlaces.add(new Point(480,80));
+
+        nextButtonLocations=new Point(580,80);
+        prevButtonLocations=new Point(240,80);
         
     	availableShapes= new ArrayList();
     	availableShapes.add(new Groot(shapePlaces.get(0).x,shapePlaces.get(0).y));
     	availableShapes.add(new Smurf(shapePlaces.get(1).x,shapePlaces.get(1).y));
     	availableShapes.add(new NinjaTurtle(shapePlaces.get(2).x,shapePlaces.get(2).y));
 
-    	countShapes=levels.get(choosedLevel).getCountShapes();
-    	places=levels.get(choosedLevel).getPlaces();
-    	locations=levels.get(choosedLevel).getLocations();
-    	edges=levels.get(choosedLevel).getEdges();
+    	loadLevel();
     	
     	setBackground(Color.DARK_GRAY);
         setFocusable(true);
@@ -134,6 +149,27 @@ public class Board extends JPanel implements ActionListener{
         doDrawing(g);
 
         Toolkit.getDefaultToolkit().sync();
+    }
+    
+    void nextLevel() {
+    	choosedLevel++;
+    	choosedLevel%=levels.size();
+    	loadLevel();
+    }
+    
+    void prevLevel() {
+    	choosedLevel+=levels.size();
+    	choosedLevel--;
+    	choosedLevel%=levels.size();
+    	loadLevel();
+    }
+    
+    void loadLevel() {
+    	countShapes=(ArrayList<Integer>)levels.get(choosedLevel).getCountShapes().clone();
+    	places=(ArrayList<Shape>)levels.get(choosedLevel).getPlaces().clone();
+    	locations=(ArrayList<Point>)levels.get(choosedLevel).getLocations().clone();
+    	edges=(ArrayList<Edge>)levels.get(choosedLevel).getEdges().clone();
+    	
     }
     
     private void doDrawing(Graphics g) {
@@ -181,13 +217,20 @@ public class Board extends JPanel implements ActionListener{
         	g2d.drawImage(draggedImage.getImage(),draggedImage.getX()-draggedImage.getWidth()/2,
         			draggedImage.getY()-draggedImage.getHeight()/2,this);
         }
+        ImageIcon icon = new ImageIcon("image/right.png");
+        ImageIcon icon1 = new ImageIcon("image/left.png");
+        icon.paintIcon(this, g,nextButtonLocations.x-10,nextButtonLocations.y-10);
+        icon1.paintIcon(this, g, prevButtonLocations.x-10,prevButtonLocations.y-10);
+//    	g2d.fillOval( nextButtonLocations.x-10,nextButtonLocations.y-10,20,20);
+//    	g2d.fillOval( prevButtonLocations.x-10,prevButtonLocations.y-10,20,20);
+        
     }
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
         repaint();
 	}
 	
-	void loadLevel() {	
+	void initLevel() {	
 		levels = new ArrayList();
 		choosedLevel=0;
 		
