@@ -17,7 +17,7 @@ public class MusicPlayer implements Runnable {
 	
 	public MusicPlayer(String... files) {
 		musicFiles = new ArrayList<String>();
-		for(String file : files) musicFiles.add("./sources/videoplayback.mp3/" + file);
+		for(String file : files) musicFiles.add("image/videoplayback.mp3" + file);
 	}
 	
 	private void playSound(String fileName) {

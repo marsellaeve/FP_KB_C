@@ -33,6 +33,7 @@ public class Board extends JPanel implements ActionListener{
     private int choosedLevel;
     private Point nextButtonLocations;
     private Point prevButtonLocations;
+    private Point musicButtonLocations;
     
     public Board() {
         initBoard();
@@ -71,6 +72,11 @@ public class Board extends JPanel implements ActionListener{
     			y=prevButtonLocations.y-currentMouseLocation.y;
     			if(Math.sqrt(x*x+y*y)<20.0) {
     				prevLevel();
+    			}
+    			x=musicButtonLocations.x-currentMouseLocation.x;
+    			y=musicButtonLocations.y-currentMouseLocation.y;
+    			if(Math.sqrt(x*x+y*y)<20.0) {
+    				Music();
     			}
     			mousePrevLocation=currentMouseLocation;
     		}
@@ -127,6 +133,7 @@ public class Board extends JPanel implements ActionListener{
 
         nextButtonLocations=new Point(580,80);
         prevButtonLocations=new Point(240,80);
+        musicButtonLocations=new Point(100,80);
         
     	availableShapes= new ArrayList();
     	availableShapes.add(new Groot(shapePlaces.get(0).x,shapePlaces.get(0).y));
@@ -235,10 +242,12 @@ public class Board extends JPanel implements ActionListener{
         	g2d.drawImage(draggedImage.getImage(),draggedImage.getX()-draggedImage.getWidth()/2,
         			draggedImage.getY()-draggedImage.getHeight()/2,this);
         }
-        ImageIcon icon = new ImageIcon("image/right.png");
-        ImageIcon icon1 = new ImageIcon("image/left.png");
-        icon.paintIcon(this, g,nextButtonLocations.x-10,nextButtonLocations.y-10);
-        icon1.paintIcon(this, g, prevButtonLocations.x-10,prevButtonLocations.y-10);
+        ImageIcon iconRight = new ImageIcon("image/right.png");
+        ImageIcon iconLeft = new ImageIcon("image/left.png");
+        ImageIcon iconMusic = new ImageIcon("image/left.png");
+        iconRight.paintIcon(this, g,nextButtonLocations.x-10,nextButtonLocations.y-10);
+        iconLeft.paintIcon(this, g, prevButtonLocations.x-10,prevButtonLocations.y-10);
+    	iconMusic.paintIcon(this, g, musicButtonLocations.x-10,musicButtonLocations.y-10);
 //    	g2d.fillOval( nextButtonLocations.x-10,nextButtonLocations.y-10,20,20);
 //    	g2d.fillOval( prevButtonLocations.x-10,prevButtonLocations.y-10,20,20);
         
