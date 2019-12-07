@@ -28,6 +28,7 @@ public class Board extends JPanel implements ActionListener{
     private Timer timer;
     private ArrayList<Shape> availableShapes;
     private ArrayList<Integer> countShapes;
+    private ArrayList<Boolean> finish;
     private Shape draggedImage;
     private Point mousePrevLocation;
     private int choosedLevel;
@@ -165,6 +166,10 @@ public class Board extends JPanel implements ActionListener{
         timer = new Timer(DELAY, this);
         timer.start();
         draggedImage=null;
+    	finish= new ArrayList();
+    	for(int i=0;i<levels.size();i++) {
+    		finish.add(false);
+    	}
     
     }
     
@@ -178,16 +183,20 @@ public class Board extends JPanel implements ActionListener{
     }
     
     void nextLevel() {
-    	choosedLevel++;
-    	choosedLevel%=levels.size();
-    	loadLevel();
+    	if(finish.get(choosedLevel)) {
+    		choosedLevel++;
+        	choosedLevel%=levels.size();
+        	loadLevel();	
+    	}
     }
     
     void prevLevel() {
-    	choosedLevel+=levels.size();
-    	choosedLevel--;
-    	choosedLevel%=levels.size();
-    	loadLevel();
+    	if(finish.get((choosedLevel-1+levels.size())%levels.size())) {
+    		choosedLevel+=levels.size();
+        	choosedLevel--;
+        	choosedLevel%=levels.size();
+        	loadLevel();	
+    	}
     }
     
     void loadLevel() {
@@ -232,6 +241,7 @@ public class Board extends JPanel implements ActionListener{
 
         g2d.setStroke(stroke);
         g.setColor(Color.white);
+        int count=0;
         for(int i=0;i<edges.size();i++) {
         	int key=edges.get(i).key;
         	int value=edges.get(i).value;
@@ -243,9 +253,13 @@ public class Board extends JPanel implements ActionListener{
         	}
         	else {
         		g.setColor(Color.GREEN);
+        		count++;
         	}
     		g.drawLine(locations.get(key).x, locations.get(key).y,
     				locations.get(value).x,locations.get(value).y);
+        }
+        if(count==edges.size()) {
+        	finish.set(choosedLevel, true);
         }
         g.setColor(Color.white);
 

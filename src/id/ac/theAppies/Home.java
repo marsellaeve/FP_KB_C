@@ -7,8 +7,8 @@ import java.awt.EventQueue;
 import java.awt.event.*;
 
 public class Home {
-	private JFrame f = new JFrame("Login");
-	private JButton bok = new JButton("OK");
+	private JFrame f = new JFrame("Home");
+	private JButton bok = new JButton("Play");
 	
 	public Home() {
 	
