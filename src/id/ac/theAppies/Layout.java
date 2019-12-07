@@ -47,12 +47,12 @@ public class Layout extends JFrame {
 		secondPanel.setBackground(Color.DARK_GRAY);
 		container.add(secondPanel, BorderLayout.AFTER_LAST_LINE);
 		
-		Kotak kotak1 = new Kotak(15, 15);
-		Kotak kotak2 = new Kotak(20, 15);
-		Kotak kotak3 = new Kotak(25, 15);
-		Kotak kotak4 = new Kotak(30, 15);
-		Kotak kotak5 = new Kotak(35, 15);
-		
+//		Kotak kotak1 = new Kotak(15, 15);
+//		Kotak kotak2 = new Kotak(20, 15);
+//		Kotak kotak3 = new Kotak(25, 15);
+//		Kotak kotak4 = new Kotak(30, 15);
+//		Kotak kotak5 = new Kotak(35, 15);
+//		
 		
 //		secondPanel.add(kotak1);//karakter 1
 //		secondPanel.add(kotak2);//karakter 2
