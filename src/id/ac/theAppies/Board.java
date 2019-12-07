@@ -1,6 +1,5 @@
 package id.ac.theAppies;
 import java.lang.Math;
-import javafx.util.*;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,16 +12,11 @@ import java.util.ArrayList;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener{
-	private boolean gameover=false;
 	private ArrayList<Level> levels;
     private ArrayList<Point> shapePlaces;
     private ArrayList<Shape> places;
@@ -124,57 +118,8 @@ public class Board extends JPanel implements ActionListener{
     	places=levels.get(choosedLevel).getPlaces();
     	locations=levels.get(choosedLevel).getLocations();
     	edges=levels.get(choosedLevel).getEdges();
-//    	countShapes=new ArrayList();
-//    	countShapes.add(7);
-//    	countShapes.add(1);
-//    	countShapes.add(4);
-//    	
-//    	places=new ArrayList();
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	places.add(null);
-//    	
-//    	locations=new ArrayList();
-//    	locations.add(new Point(250,300));
-//    	locations.add(new Point(400,300));
-//    	locations.add(new Point(400,450));
-//    	locations.add(new Point(550,450));
-//    	locations.add(new Point(400,225));
-//    	locations.add(new Point(600,225));
-//    	locations.add(new Point(250,500));
-//    	locations.add(new Point(200,450));
-//    	locations.add(new Point(250,400));
-//    	locations.add(new Point(200,225));
-//    	locations.add(new Point(500,400));
-//    	locations.add(new Point(500,500));
-//    	
-//    	edges=new ArrayList();
-//    	edges.add(new Edge(0, 1));
-//    	edges.add(new Edge(0, 9));
-//    	edges.add(new Edge(0, 2));
-//    	edges.add(new Edge(0, 8));
-//    	edges.add(new Edge(1, 2));
-//    	edges.add(new Edge(1, 10));
-//    	edges.add(new Edge(1, 4));
-//    	edges.add(new Edge(2, 3));
-//    	edges.add(new Edge(2, 7));
-//    	edges.add(new Edge(3, 10));
-//    	edges.add(new Edge(4, 5));
-//    	edges.add(new Edge(6, 8));
-//    	edges.add(new Edge(7, 8));
-//    	edges.add(new Edge(10, 11));
-//    	
     	
-    	setBackground(Color.BLACK);
+    	setBackground(Color.DARK_GRAY);
         setFocusable(true);
         timer = new Timer(DELAY, this);
         timer.start();
@@ -194,14 +139,14 @@ public class Board extends JPanel implements ActionListener{
     private void doDrawing(Graphics g) {
     	Stroke stroke = new BasicStroke(4f);
         Graphics2D g2d = (Graphics2D) g;
-        g.setColor(Color.WHITE);
+        g.setColor(Color.white);
         g2d.setStroke(stroke);
         
         for(int i=0;i<edges.size();i++) {
         	int key=edges.get(i).key;
         	int value=edges.get(i).value;
         	if(places.get(key)==null || places.get(value)==null) {
-        		g.setColor(Color.WHITE);
+        		g.setColor(Color.white);
         	}
         	else if(places.get(key).getClass()==places.get(value).getClass()) {
         		g.setColor(Color.RED);
@@ -212,7 +157,7 @@ public class Board extends JPanel implements ActionListener{
     		g.drawLine(locations.get(key).x, locations.get(key).y,
     				locations.get(value).x,locations.get(value).y);
         }
-        g.setColor(Color.WHITE);
+        g.setColor(Color.white);
 
         for(int i=0;i<places.size();i++) {
 	        if(places.get(i)==null) {
@@ -244,11 +189,32 @@ public class Board extends JPanel implements ActionListener{
 	
 	void loadLevel() {	
 		levels = new ArrayList();
+		choosedLevel=0;
+		
+		countShapes=new ArrayList();
+    	countShapes.add(1);
+    	countShapes.add(1);
+    	countShapes.add(1);
+    	
+        places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+
+        locations=new ArrayList();
+	    locations.add(new Point(300,330));
+    	locations.add(new Point(400,400));
+    	locations.add(new Point(500,330));
+    	
+    	edges=new ArrayList();
+    	edges.add(new Edge(0, 1));
+    	edges.add(new Edge(1, 2));
+    	levels.add(new Level(places,locations,edges,countShapes));
+    	
 		countShapes=new ArrayList();
     	countShapes.add(7);
     	countShapes.add(1);
     	countShapes.add(4);
-		choosedLevel=4;
     	
     	places=new ArrayList();
     	places.add(null);
