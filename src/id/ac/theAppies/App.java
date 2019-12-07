@@ -3,6 +3,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 public class App extends JFrame {
+	Board board;
 
     public App() {
         
@@ -10,8 +11,8 @@ public class App extends JFrame {
     }
     
     private void initUI() {
-
-        add(new Board());
+    	board=new Board();
+        add(board);
 
         setTitle("The Appies");
         setSize(800, 650);
@@ -20,7 +21,7 @@ public class App extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
+    
     public static void main(String[] args) {
 
         EventQueue.invokeLater(() -> {
