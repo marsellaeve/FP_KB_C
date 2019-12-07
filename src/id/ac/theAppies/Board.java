@@ -33,6 +33,7 @@ public class Board extends JPanel implements ActionListener{
     public Board() {
         initBoard();
     }
+    
     private void initBoard() {
     	this.addMouseListener(new MouseAdapter() {
     		@Override
@@ -182,6 +183,7 @@ public class Board extends JPanel implements ActionListener{
         			draggedImage.getY()-draggedImage.getHeight()/2,this);
         }
     }
+    
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
         repaint();

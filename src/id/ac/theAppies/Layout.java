@@ -53,7 +53,6 @@ public class Layout extends JFrame {
 		Kotak kotak4 = new Kotak(30, 15);
 		Kotak kotak5 = new Kotak(35, 15);
 		
-		
 //		secondPanel.add(kotak1);//karakter 1
 //		secondPanel.add(kotak2);//karakter 2
 //		secondPanel.add(kotak3);//karakter 3
