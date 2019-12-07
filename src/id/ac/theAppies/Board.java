@@ -172,6 +172,23 @@ public class Board extends JPanel implements ActionListener{
     	
     }
     
+	public void HowToPlay() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void Reload() {
+		countShapes=(ArrayList<Integer>)levels.get(choosedLevel).getCountShapes().clone();
+    	places=(ArrayList<Shape>)levels.get(choosedLevel).getPlaces().clone();
+    	locations=(ArrayList<Point>)levels.get(choosedLevel).getLocations().clone();
+    	edges=(ArrayList<Edge>)levels.get(choosedLevel).getEdges().clone();
+	}
+
+	public void Music() {
+		MusicPlayer player = new MusicPlayer ("LALALA");
+		player.play();
+	}
+    
     private void doDrawing(Graphics g) {
     	Stroke stroke = new BasicStroke(4f);
         Graphics2D g2d = (Graphics2D) g;
