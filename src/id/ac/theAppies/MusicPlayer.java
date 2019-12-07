@@ -1,6 +1,6 @@
 package id.ac.theAppies;
-
-import java.io.File;
+import  sun.audio.*;   
+import java.io.*;
 import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFormat;
@@ -15,9 +15,9 @@ public class MusicPlayer implements Runnable {
 	private ArrayList<String> musicFiles;
 	private int currentSongIndex;
 	
-	public MusicPlayer(String... files) {
+	public MusicPlayer() {
 		musicFiles = new ArrayList<String>();
-		for(String file : files) musicFiles.add("image/videoplayback.mp3" + file);
+		musicFiles.add("image/videoplayback.wav");
 	}
 	
 	private void playSound(String fileName) {
@@ -34,18 +34,19 @@ public class MusicPlayer implements Runnable {
 			clip.start();
 		} catch(Exception e) {
 			e.printStackTrace();
+			System.out.println(fileName);
 		}
 	}
 	
 	@Override
 	public void run() {
-		playSound(musicFiles.get(currentSongIndex));
+		playSound(musicFiles.get(0));
 	}
 	
 	 public void play() 
 	 {
 	      Thread t = new Thread(this);
-	      t.start();
+	      t.run();
 	 }
 	
 }

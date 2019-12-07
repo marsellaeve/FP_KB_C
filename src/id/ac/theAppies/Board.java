@@ -193,7 +193,7 @@ public class Board extends JPanel implements ActionListener{
 	}
 
 	public void Music() {
-		MusicPlayer player = new MusicPlayer ("LALALA");
+		MusicPlayer player = new MusicPlayer ();
 		player.play();
 	}
     
@@ -244,7 +244,7 @@ public class Board extends JPanel implements ActionListener{
         }
         ImageIcon iconRight = new ImageIcon("image/right.png");
         ImageIcon iconLeft = new ImageIcon("image/left.png");
-        ImageIcon iconMusic = new ImageIcon("image/left.png");
+        ImageIcon iconMusic = new ImageIcon("image/music-player.png");
         iconRight.paintIcon(this, g,nextButtonLocations.x-10,nextButtonLocations.y-10);
         iconLeft.paintIcon(this, g, prevButtonLocations.x-10,prevButtonLocations.y-10);
     	iconMusic.paintIcon(this, g, musicButtonLocations.x-10,musicButtonLocations.y-10);
