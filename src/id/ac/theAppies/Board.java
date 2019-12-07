@@ -3,6 +3,7 @@ package id.ac.theAppies;
 import java.lang.Math;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -13,7 +14,6 @@ import java.util.ArrayList;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -34,6 +34,10 @@ public class Board extends JPanel implements ActionListener{
     private Point nextButtonLocations;
     private Point prevButtonLocations;
     private Point musicButtonLocations;
+    private Point restartButtonLocations;
+    private MusicPlayer player;
+    private boolean musicPlayed;
+    private Point questionButtonLocations;
     
     public Board() {
         initBoard();
@@ -77,6 +81,16 @@ public class Board extends JPanel implements ActionListener{
     			y=musicButtonLocations.y-currentMouseLocation.y;
     			if(Math.sqrt(x*x+y*y)<20.0) {
     				Music();
+    			}
+    			x=restartButtonLocations.x-currentMouseLocation.x;
+    			y=restartButtonLocations.y-currentMouseLocation.y;
+    			if(Math.sqrt(x*x+y*y)<20.0) {
+    				Reload();
+    			}
+    			x=questionButtonLocations.x-currentMouseLocation.x;
+    			y=questionButtonLocations.y-currentMouseLocation.y;
+    			if(Math.sqrt(x*x+y*y)<20.0) {
+    				HowToPlay();
     			}
     			mousePrevLocation=currentMouseLocation;
     		}
@@ -124,6 +138,8 @@ public class Board extends JPanel implements ActionListener{
     			}
     		}
     	});
+    	musicPlayed=false;
+    	player = new MusicPlayer ();
     	choosedLevel=1;
     	initLevel();
         shapePlaces = new ArrayList();
@@ -131,9 +147,11 @@ public class Board extends JPanel implements ActionListener{
         shapePlaces.add(new Point(400,80));
         shapePlaces.add(new Point(480,80));
 
-        nextButtonLocations=new Point(580,80);
-        prevButtonLocations=new Point(240,80);
-        musicButtonLocations=new Point(100,80);
+        nextButtonLocations=new Point(720,80);
+        prevButtonLocations=new Point(80,80);
+        musicButtonLocations=new Point(640,80);
+        restartButtonLocations=new Point(560,80);
+        questionButtonLocations=new Point(160,78);
         
     	availableShapes= new ArrayList();
     	availableShapes.add(new Groot(shapePlaces.get(0).x,shapePlaces.get(0).y));
@@ -191,23 +209,34 @@ public class Board extends JPanel implements ActionListener{
     	locations=(ArrayList<Point>)levels.get(choosedLevel).getLocations().clone();
     	edges=(ArrayList<Edge>)levels.get(choosedLevel).getEdges().clone();
 	}
-
 	public void Music() {
-		MusicPlayer player = new MusicPlayer ();
-		player.play();
+		if(musicPlayed) {
+			player.stop();
+		}
+		else player.play();
+		musicPlayed=!musicPlayed;
 	}
     
     private void doDrawing(Graphics g) {
     	Stroke stroke = new BasicStroke(4f);
+    	Stroke stroke2 = new BasicStroke(6f);
+    	Stroke stroke3 = new BasicStroke(2f);
         Graphics2D g2d = (Graphics2D) g;
-        g.setColor(Color.white);
-        g2d.setStroke(stroke);
+
+        g2d.setStroke(stroke2);
+        g.setColor(Color.black);
+        g2d.fillRect(0, 0, 800, 140);
         
+        g.setColor(Color.LIGHT_GRAY);
+        g2d.drawLine(0, 140, 800, 140);
+
+        g2d.setStroke(stroke);
+        g.setColor(Color.white);
         for(int i=0;i<edges.size();i++) {
         	int key=edges.get(i).key;
         	int value=edges.get(i).value;
         	if(places.get(key)==null || places.get(value)==null) {
-        		g.setColor(Color.white);
+        		g.setColor(Color.lightGray);
         	}
         	else if(places.get(key).getClass()==places.get(value).getClass()) {
         		g.setColor(Color.RED);
@@ -231,11 +260,19 @@ public class Board extends JPanel implements ActionListener{
         }
         
         for(int i=0;i<countShapes.size();i++) {
+        	g.setColor(Color.DARK_GRAY);
+    		g2d.setStroke(stroke3);
+        	g2d.drawRect(availableShapes.get(i).getX()-availableShapes.get(i).getWidth()/2-1,
+        			availableShapes.get(i).getY()-availableShapes.get(i).getHeight()/2,50,50);
         	if(countShapes.get(i)>0) {
         		g2d.drawImage(availableShapes.get(i).getImage(), availableShapes.get(i).getX()-availableShapes.get(i).getWidth()/2,
         			availableShapes.get(i).getY()-availableShapes.get(i).getHeight()/2, this);
-        		g.drawString(countShapes.get(i).toString(), availableShapes.get(i).getX()-availableShapes.get(i).getWidth()/2,
-            			availableShapes.get(i).getY()-availableShapes.get(i).getHeight()/2);
+                g.setColor(Color.DARK_GRAY);
+        		g.fillRect(availableShapes.get(i).getX()-availableShapes.get(i).getWidth()/2-2,
+            			availableShapes.get(i).getY()-availableShapes.get(i).getHeight()/2-15,18,15);
+        		g.setColor(Color.white);
+        		g.drawString(countShapes.get(i).toString()+"x", availableShapes.get(i).getX()-availableShapes.get(i).getWidth()/2,
+            			availableShapes.get(i).getY()-availableShapes.get(i).getHeight()/2-3);
         	}
         }
         if(draggedImage!=null) {
@@ -245,9 +282,25 @@ public class Board extends JPanel implements ActionListener{
         ImageIcon iconRight = new ImageIcon("image/right.png");
         ImageIcon iconLeft = new ImageIcon("image/left.png");
         ImageIcon iconMusic = new ImageIcon("image/music-player.png");
+        ImageIcon iconReload = new ImageIcon("image/Restart.png");
+        ImageIcon iconQuestion = new ImageIcon("image/question-mark.png");
         iconRight.paintIcon(this, g,nextButtonLocations.x-10,nextButtonLocations.y-10);
         iconLeft.paintIcon(this, g, prevButtonLocations.x-10,prevButtonLocations.y-10);
     	iconMusic.paintIcon(this, g, musicButtonLocations.x-10,musicButtonLocations.y-10);
+    	iconReload.paintIcon(this, g, restartButtonLocations.x-10,restartButtonLocations.y-10);
+    	iconQuestion.paintIcon(this, g, questionButtonLocations.x-10,questionButtonLocations.y-10);
+        if(!musicPlayed) {
+        	g.setColor(Color.red);
+        	g.drawLine(musicButtonLocations.x-10, musicButtonLocations.y+20,musicButtonLocations.x+25, musicButtonLocations.y-10);
+        }
+        g.setColor(Color.white);
+      //tulisan level
+        g.fillRect(0, 0, 110, 40);
+        Font tr = new Font("Comic Sans", Font.BOLD, 26);
+        g2d.setFont(tr);
+        g.setColor(Color.black);
+        g2d.drawString("Level "+ (choosedLevel+1), 10, 30);
+     //
 //    	g2d.fillOval( nextButtonLocations.x-10,nextButtonLocations.y-10,20,20);
 //    	g2d.fillOval( prevButtonLocations.x-10,prevButtonLocations.y-10,20,20);
         

@@ -10,43 +10,33 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 
-public class MusicPlayer implements Runnable {
+public class MusicPlayer{
 
-	private ArrayList<String> musicFiles;
+	private String musicFiles;
 	private int currentSongIndex;
-	
+	private Clip clip;
 	public MusicPlayer() {
-		musicFiles = new ArrayList<String>();
-		musicFiles.add("image/videoplayback.wav");
-	}
-	
-	private void playSound(String fileName) {
+		musicFiles="image/videoplayback.wav";
 		try {
-			File soundFile = new File(fileName);
+			File soundFile = new File(musicFiles);
 			AudioInputStream ais = AudioSystem.getAudioInputStream(soundFile);
 			AudioFormat format = ais.getFormat();
 			DataLine.Info info = new DataLine.Info(Clip.class, format);
-			Clip clip = (Clip) AudioSystem.getLine(info);
+			clip = (Clip) AudioSystem.getLine(info);
 			clip.open(ais);
 			
 			FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(-10);
-			clip.start();
 		} catch(Exception e) {
 			e.printStackTrace();
-			System.out.println(fileName);
 		}
 	}
-	
-	@Override
-	public void run() {
-		playSound(musicFiles.get(0));
+	public void play() {
+		clip.start();
 	}
-	
-	 public void play() 
-	 {
-	      Thread t = new Thread(this);
-	      t.run();
-	 }
-	
+	 
+	public void stop() {
+		clip.stop();
+	}
+
 }
