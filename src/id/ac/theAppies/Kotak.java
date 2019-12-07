@@ -18,8 +18,8 @@ public class Kotak {
 	private int x;
 	private int y;
 	
-	public Kotak(int value, int x, int y) {
-		this.value = value;
+	public Kotak(int x, int y) {
+//		this.value = value;
 		this.x = x;
 		this.y = y;
 		gambarKotak = new BufferedImage (WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);		
@@ -40,14 +40,7 @@ public class Kotak {
 		else if (value == 3) {
 			background = new Color(0xf79d3d);
 		}
-		//untuk gambar
-		else if (value == 4) {
-			background = new Color(0xf28007);
-		}
-		//untuk gambar
-		else if (value == 5) {
-			background = new Color(0xf55e3b);
-		}
+
 		//kalo g ditaruh gambar
 		else {
 			background = Color.black;
@@ -58,9 +51,5 @@ public class Kotak {
 		
 		g.setColor(background);
 		g.fillRoundRect(0, 0, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
-		
-		if (value <= 5) {
-			
-		}
 	}
 }
