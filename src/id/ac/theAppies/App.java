@@ -6,6 +6,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 public class App extends JFrame {
 	Board board;
@@ -30,7 +31,7 @@ public class App extends JFrame {
     }
     
     public static void main(String[] args) {
-		
+//    	SwingUtilities.invokeLater(() -> new MainFrame());
         EventQueue.invokeLater(() -> {
             App ex = new App();
             ex.setVisible(true);

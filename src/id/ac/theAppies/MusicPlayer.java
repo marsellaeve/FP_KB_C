@@ -16,7 +16,7 @@ public class MusicPlayer{
 	private int currentSongIndex;
 	private Clip clip;
 	public MusicPlayer() {
-		musicFiles="image/videoplayback.wav";
+		musicFiles="image/lagu.wav";
 		try {
 			File soundFile = new File(musicFiles);
 			AudioInputStream ais = AudioSystem.getAudioInputStream(soundFile);
