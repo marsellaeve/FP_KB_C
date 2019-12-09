@@ -20,7 +20,7 @@ public class Home {
 				loadBoard();
 			}
 		});
-		f.setSize(800,600);
+		f.setSize(800,650);
 		f.setVisible(true);
 		f.setLocationRelativeTo(null);
 		f.setResizable(false);
