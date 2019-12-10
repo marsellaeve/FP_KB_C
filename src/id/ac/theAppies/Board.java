@@ -40,11 +40,13 @@ public class Board extends JPanel implements ActionListener{
     private MusicPlayer player;
     private boolean musicPlayed;
     private Point questionButtonLocations;
+    private boolean isHelpPage;
     private boolean isMainPage;
     private Point mainButtonLocations;
     private Point smurfButtonLocations;
     private Point grootButtonLocations;
     private Point turtleButtonLocations;
+    private Point helpbackButtonLocations;
     private boolean isLevelPage;
     private ArrayList<Point> levelLocations;
     
@@ -54,12 +56,10 @@ public class Board extends JPanel implements ActionListener{
     
     private void initBoard() {
     	isMainPage=true;
-//    	isLevelPage=false;
     	this.addMouseListener(new MouseAdapter() {
     		@Override
     		public void mousePressed(MouseEvent e) {
     			Point currentMouseLocation=e.getPoint();
-    			
     			int x=mainButtonLocations.x-currentMouseLocation.x+75;
     			int y=mainButtonLocations.y-currentMouseLocation.y+35;
     			if(isMainPage==true) {
@@ -125,7 +125,15 @@ public class Board extends JPanel implements ActionListener{
     			x=questionButtonLocations.x-currentMouseLocation.x;
     			y=questionButtonLocations.y-currentMouseLocation.y;
     			if(Math.sqrt(x*x+y*y)<20.0) {
-    				HowToPlay();
+    				isHelpPage=true;
+    			}
+    			x=helpbackButtonLocations.x-currentMouseLocation.x;
+    			y=helpbackButtonLocations.y-currentMouseLocation.y;
+    			if(isHelpPage==true) {
+    				if(Math.sqrt(x*x+y*y)<=25.0) {
+    					isHelpPage=false;
+    				}
+    				return;
     			}
     			mousePrevLocation=currentMouseLocation;
     		}
@@ -188,6 +196,7 @@ public class Board extends JPanel implements ActionListener{
         restartButtonLocations=new Point(560,80);
         questionButtonLocations=new Point(160,78);
         levelButtonLocations=new Point(240,78);
+        helpbackButtonLocations=new Point(393,518);
         
         mainButtonLocations = new Point(400,500);
         grootButtonLocations = new Point(130,200);
@@ -237,7 +246,6 @@ public class Board extends JPanel implements ActionListener{
     }
     
     void pageLevel(int thisLevel) {
-    	
 		choosedLevel=thisLevel;
     	loadLevel();	
     }
@@ -267,11 +275,6 @@ public class Board extends JPanel implements ActionListener{
     	
     }
     
-	public void HowToPlay() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void Reload() {
 		countShapes=(ArrayList<Integer>)levels.get(choosedLevel).getCountShapes().clone();
     	places=(ArrayList<Shape>)levels.get(choosedLevel).getPlaces().clone();
@@ -301,7 +304,7 @@ public class Board extends JPanel implements ActionListener{
         if(isMainPage) {
         	g2d.setColor(Color.DARK_GRAY);
         	g2d.fillRect(0, 0, 800, 650);
-        	g2d.setColor(Color.CYAN);
+        	g2d.setColor(Color.cyan);
         	g2d.fillRect( mainButtonLocations.x-75,mainButtonLocations.y-35, 150, 70);
         	g2d.setColor(Color.white);
         	g2d.drawRect( mainButtonLocations.x-75,mainButtonLocations.y-35, 150, 70);
@@ -328,9 +331,28 @@ public class Board extends JPanel implements ActionListener{
         if(isLevelPage) {
         	g2d.setColor(Color.DARK_GRAY);
         	g2d.fillRect(0, 0, 800, 650);
-        	g2d.setColor(Color.CYAN);
+            g2d.setFont(tr6);
+            
         	for(int i=0;i<levelLocations.size();i++) {
+        		if ((i%2==1||i==4||i==6)&&i!=5&&i!=7)
+        			g2d.setColor(Color.CYAN);
+        		else if (i%2==0 || i==5||i==7)
+                	g2d.setColor(Color.BLUE);
         		g2d.fillOval(levelLocations.get(i).x-40,levelLocations.get(i).y-40, 80, 80);
+            	g2d.setColor(Color.white);
+        		g2d.drawOval(levelLocations.get(i).x-40,levelLocations.get(i).y-40, 80, 80);
+            	g2d.setColor(Color.white);
+        		String str = String.valueOf(i+1);
+        		if(i>=9)
+        			g.drawString(str,levelLocations.get(i).x-24,levelLocations.get(i).y+16);
+        		else
+            		g.drawString(str,levelLocations.get(i).x-12,levelLocations.get(i).y+16);
+        		if(i!=0) {
+        			if(!finish.get(i-1)) {
+            	        ImageIcon iconLock = new ImageIcon("image/lock.png");
+        				iconLock.paintIcon(this, g,levelLocations.get(i).x-40,levelLocations.get(i).y-40);
+        			}
+        		}
         	}
             g2d.setFont(tr6);
         	g2d.setColor(Color.white);
@@ -405,26 +427,33 @@ public class Board extends JPanel implements ActionListener{
         ImageIcon iconMusic = new ImageIcon("image/music-player.png");
         ImageIcon iconReload = new ImageIcon("image/Restart.png");
         ImageIcon iconQuestion = new ImageIcon("image/question-mark.png");
-        ImageIcon iconLevel = new ImageIcon("image/question-mark.png");
+        ImageIcon iconLevel = new ImageIcon("image/menu.png");
         iconRight.paintIcon(this, g,nextButtonLocations.x-10,nextButtonLocations.y-10);
         iconLeft.paintIcon(this, g, prevButtonLocations.x-10,prevButtonLocations.y-10);
     	iconMusic.paintIcon(this, g, musicButtonLocations.x-10,musicButtonLocations.y-10);
     	iconReload.paintIcon(this, g, restartButtonLocations.x-10,restartButtonLocations.y-10);
     	iconQuestion.paintIcon(this, g, questionButtonLocations.x-10,questionButtonLocations.y-10);
-    	iconLevel.paintIcon(this, g, levelButtonLocations.x-10,levelButtonLocations.y-10);
+    	iconLevel.paintIcon(this, g, levelButtonLocations.x-12,levelButtonLocations.y-12);
         if(!musicPlayed) {
         	g.setColor(Color.red);
         	g.drawLine(musicButtonLocations.x-10, musicButtonLocations.y+20,musicButtonLocations.x+25, musicButtonLocations.y-10);
         }
         g.setColor(Color.white);
       //tulisan level
-        g.fillRect(0, 0, 110, 40);
+        g.fillRect(0, 0, 120, 40);
         g2d.setFont(tr);
         g.setColor(Color.black);
         g2d.drawString("Level "+ (choosedLevel+1), 10, 30);
-     //
-//    	g2d.fillOval( nextButtonLocations.x-10,nextButtonLocations.y-10,20,20);
-//    	g2d.fillOval( prevButtonLocations.x-10,prevButtonLocations.y-10,20,20);
+        
+        
+        if(isHelpPage) {
+        	g2d.setColor(Color.white);
+        	g2d.drawRect(questionButtonLocations.x+80,questionButtonLocations.y-20, 303,500);
+            g2d.setFont(tr6);
+        	ImageIcon howToPlay = new ImageIcon("image/howToPlay.png");
+	        howToPlay.paintIcon(this, g,questionButtonLocations.x+80,questionButtonLocations.y-20);
+	        return;
+        }
         
     }
     
@@ -963,6 +992,132 @@ public class Board extends JPanel implements ActionListener{
         edges.add(new Edge(12, 13));
         edges.add(new Edge(12, 2));
         levels.add(new Level(places,locations,edges,countShapes));
+        
+//level 11
+        countShapes=new ArrayList();
+    	countShapes.add(8);
+    	countShapes.add(4);
+    	countShapes.add(3);
+    	
+    	places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	
+    	locations=new ArrayList();
+    	locations.add(new Point(430,350)); //0a
+    	locations.add(new Point(375,350)); //1b
+    	locations.add(new Point(325,350)); //2c
+    	locations.add(new Point(275,350)); //3d
+    	locations.add(new Point(425,200)); //4e
+    	locations.add(new Point(425,300)); //5f
+    	locations.add(new Point(525,450)); //6g
+    	locations.add(new Point(475,500)); //7h
+    	locations.add(new Point(430,450)); //8i
+    	locations.add(new Point(525,350)); //9j
+    	locations.add(new Point(375,400)); //10k
+    	locations.add(new Point(375,500)); //11L
+    	locations.add(new Point(325,450)); //12M
+    	locations.add(new Point(275,400)); //13N
+    	locations.add(new Point(420,540)); //14O
+
+        edges=new ArrayList();
+    	edges.add(new Edge(0, 1));
+    	edges.add(new Edge(0, 6));
+    	edges.add(new Edge(1, 2));
+    	edges.add(new Edge(1, 5));
+    	edges.add(new Edge(1, 10));
+    	edges.add(new Edge(2, 3));
+    	edges.add(new Edge(2, 10));
+    	edges.add(new Edge(2, 12));
+    	edges.add(new Edge(3, 4));
+    	edges.add(new Edge(3, 13));
+    	edges.add(new Edge(3, 12));
+    	edges.add(new Edge(10, 13));
+    	edges.add(new Edge(10, 12));
+    	edges.add(new Edge(10, 11));
+    	edges.add(new Edge(8, 9));
+    	edges.add(new Edge(8, 7));
+    	edges.add(new Edge(8, 12));
+    	edges.add(new Edge(7, 6));
+    	edges.add(new Edge(7, 11));
+    	edges.add(new Edge(8, 6));
+    	edges.add(new Edge(11, 14));
+		levels.add(new Level(places,locations,edges,countShapes));
+
+//level 12
+        countShapes=new ArrayList();
+    	countShapes.add(8);
+    	countShapes.add(4);
+    	countShapes.add(3);
+    	
+    	places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
+    	
+    	locations=new ArrayList();
+    	locations.add(new Point(250,250)); //0a
+    	locations.add(new Point(550,250)); //1b
+    	locations.add(new Point(350,300)); //2c
+    	locations.add(new Point(450,300)); //3d
+    	locations.add(new Point(350,450)); //4e
+    	locations.add(new Point(450,450)); //5f
+    	locations.add(new Point(500,450)); //6g
+    	locations.add(new Point(550,450)); //7h
+    	locations.add(new Point(550,400)); //8i
+    	locations.add(new Point(250,450)); //9j
+    	locations.add(new Point(300,500)); //10k
+    	locations.add(new Point(350,400)); //11L
+    	locations.add(new Point(250,350)); //12M
+    	locations.add(new Point(300,380)); //13N
+    	locations.add(new Point(500,330)); //14O
+
+        edges=new ArrayList();
+    	edges.add(new Edge(0, 12));
+    	edges.add(new Edge(1, 8));
+    	edges.add(new Edge(2, 3));
+    	edges.add(new Edge(2, 12));
+    	edges.add(new Edge(2, 13));
+    	edges.add(new Edge(2, 11));
+    	edges.add(new Edge(3, 14));
+    	edges.add(new Edge(3, 5));
+    	edges.add(new Edge(3, 11));
+    	edges.add(new Edge(4, 5));
+    	edges.add(new Edge(4, 14));
+    	edges.add(new Edge(4, 11));
+    	edges.add(new Edge(4, 9));
+    	edges.add(new Edge(4, 10));
+    	edges.add(new Edge(6, 5));
+    	edges.add(new Edge(6, 7));
+    	edges.add(new Edge(8, 7));
+    	edges.add(new Edge(8, 14));
+    	edges.add(new Edge(8, 11));
+    	edges.add(new Edge(13, 12));
+    	edges.add(new Edge(13, 11));
+    	edges.add(new Edge(12, 9));
+		levels.add(new Level(places,locations,edges,countShapes));
 
 	}
 }

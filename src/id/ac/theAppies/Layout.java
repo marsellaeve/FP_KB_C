@@ -96,7 +96,7 @@ public class Layout extends JFrame {
 	private class ButtonHandler implements ActionListener {	
 		public void actionPerformed(ActionEvent e) {
 			if(e.getActionCommand().equals("Tanya")) {
-				canvas.HowToPlay();
+//				canvas.HowToPlay();
 			}
 			else if(e.getActionCommand().equals("Reload")) {
 				canvas.Reload();
