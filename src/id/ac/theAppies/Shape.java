@@ -3,7 +3,6 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 
 public class Shape {
-
     protected int x;
     protected int y;
     protected int width;
@@ -26,9 +25,11 @@ public class Shape {
         width = image.getWidth(null);
         height = image.getHeight(null);
     }
+    
     public void setX(int x) {
     	this.x=x;
     }
+    
     public void setY(int y) {
     	this.y=y;
     }
@@ -44,9 +45,11 @@ public class Shape {
     public void addX(int x) {
     	this.x+=x;
     }
+    
     public void addY(int y) {
     	this.y+=y;
     }
+    
 	public Image getImage() {
         return image;
     }

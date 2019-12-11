@@ -1,8 +1,6 @@
 package id.ac.theAppies;
-import  sun.audio.*;   
-import java.io.*;
-import java.util.ArrayList;
 
+import java.io.*;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -11,10 +9,9 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 
 public class MusicPlayer{
-
 	private String musicFiles;
-	private int currentSongIndex;
 	private Clip clip;
+	
 	public MusicPlayer() {
 		musicFiles="image/lagu.wav";
 		try {
@@ -27,10 +24,12 @@ public class MusicPlayer{
 			
 			FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(-10);
-		} catch(Exception e) {
+		}
+		catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
 	public void play() {
 		clip.start();
 	}
@@ -38,5 +37,4 @@ public class MusicPlayer{
 	public void stop() {
 		clip.stop();
 	}
-
 }

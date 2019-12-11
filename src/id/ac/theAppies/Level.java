@@ -4,13 +4,10 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 public class Level {
-
 	private ArrayList<Shape> places;
     private ArrayList<Point> locations;
     private ArrayList<Edge> edges;
     private ArrayList<Integer> countShapes;
-    
-    
     
     public Level(ArrayList<Shape> places, ArrayList<Point> locations,
 			ArrayList<Edge> edges, ArrayList<Integer> countShapes) {
