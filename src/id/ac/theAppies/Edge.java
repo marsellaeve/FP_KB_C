@@ -8,5 +8,4 @@ public class Edge {
 		this.key=key;
 		this.value=value;
 	}
-	
 }

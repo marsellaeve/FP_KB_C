@@ -31,7 +31,7 @@ public class MusicPlayer{
 	}
 	
 	public void play() {
-		clip.start();
+		clip.loop(1000);
 	}
 	 
 	public void stop() {

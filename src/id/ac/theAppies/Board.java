@@ -23,31 +23,31 @@ public class Board extends JPanel implements ActionListener{
     private ArrayList<Shape> places;
     private ArrayList<Point> locations;
     private ArrayList<Edge> edges;
-    private final int DELAY = 10;
-    private Timer timer;
+    private ArrayList<Point> levelLocations;
     private ArrayList<Shape> availableShapes;
     private ArrayList<Integer> countShapes;
     private ArrayList<Boolean> finish;
+    private final int DELAY = 10;
+    private Timer timer;
     private Shape draggedImage;
-    private Point mousePrevLocation;
     private int choosedLevel;
+    private Point mousePrevLocation;
     private Point nextButtonLocations;
     private Point prevButtonLocations;
     private Point musicButtonLocations;
     private Point restartButtonLocations;
     private Point levelButtonLocations;
-    private MusicPlayer player;
-    private boolean musicPlayed;
     private Point questionButtonLocations;
-    private boolean isHelpPage;
-    private boolean isMainPage;
     private Point mainButtonLocations;
     private Point smurfButtonLocations;
     private Point grootButtonLocations;
     private Point turtleButtonLocations;
     private Point helpbackButtonLocations;
+    private MusicPlayer player;
+    private boolean musicPlayed;
+    private boolean isHelpPage;
+    private boolean isMainPage;
     private boolean isLevelPage;
-    private ArrayList<Point> levelLocations;
     
     public Board() {
         initBoard();
@@ -59,6 +59,7 @@ public class Board extends JPanel implements ActionListener{
     		@Override
     		public void mousePressed(MouseEvent e) {
     			Point currentMouseLocation=e.getPoint();
+    			//main page, jika start di klik	
     			int x=mainButtonLocations.x-currentMouseLocation.x+75;
     			int y=mainButtonLocations.y-currentMouseLocation.y+35;
     			if(isMainPage==true) {
@@ -68,17 +69,22 @@ public class Board extends JPanel implements ActionListener{
     				}
     				return;
     			}
+    			
+    			//level page
     			if(isLevelPage==true) {
     				for(int i=0;i<levelLocations.size();i++) {
     					x=levelLocations.get(i).x-currentMouseLocation.x;
         				y=levelLocations.get(i).y-currentMouseLocation.y;
         				if(Math.sqrt(x*x+y*y)<40.0 && (i==0||finish.get(i-1))) {
             				isLevelPage=false;
+            				if(i==0) isHelpPage=true;
         					pageLevel(i);
         				}
     				}
     				return;
     			}
+    			
+    			//tempat shape diklik	
     			for(int i=0;i<shapePlaces.size();i++) {
     				x=shapePlaces.get(i).x-currentMouseLocation.x;
     				y=shapePlaces.get(i).y-currentMouseLocation.y;
@@ -88,6 +94,7 @@ public class Board extends JPanel implements ActionListener{
     				}
     			}
     			
+    			//titik berisi shape di klik
     			for(int i=0;i<locations.size();i++) {
     				x=locations.get(i).x-currentMouseLocation.x;
     				y=locations.get(i).y-currentMouseLocation.y;
@@ -96,36 +103,50 @@ public class Board extends JPanel implements ActionListener{
         				places.set(i, null);
         			}
     			}
+    			
+    			//level button
     			x=levelButtonLocations.x-currentMouseLocation.x;
     			y=levelButtonLocations.y-currentMouseLocation.y;
     			if(Math.sqrt(x*x+y*y)<20.0) {
     				isLevelPage=true;
     			}
+    			
+    			//next button
     			x=nextButtonLocations.x-currentMouseLocation.x;
     			y=nextButtonLocations.y-currentMouseLocation.y;
     			if(Math.sqrt(x*x+y*y)<20.0) {
     				nextLevel();
     			}
+    			
+    			//prev button
     			x=prevButtonLocations.x-currentMouseLocation.x;
     			y=prevButtonLocations.y-currentMouseLocation.y;
     			if(Math.sqrt(x*x+y*y)<20.0) {
     				prevLevel();
     			}
+    			
+    			//music button
     			x=musicButtonLocations.x-currentMouseLocation.x;
     			y=musicButtonLocations.y-currentMouseLocation.y;
     			if(Math.sqrt(x*x+y*y)<20.0) {
     				Music();
     			}
+    			
+    			//restart button
     			x=restartButtonLocations.x-currentMouseLocation.x;
     			y=restartButtonLocations.y-currentMouseLocation.y;
     			if(Math.sqrt(x*x+y*y)<20.0) {
     				Reload();
     			}
+    			
+    			//how to play button
     			x=questionButtonLocations.x-currentMouseLocation.x;
     			y=questionButtonLocations.y-currentMouseLocation.y;
     			if(Math.sqrt(x*x+y*y)<20.0) {
     				isHelpPage=true;
     			}
+    			
+    			//hide how to play
     			x=helpbackButtonLocations.x-currentMouseLocation.x;
     			y=helpbackButtonLocations.y-currentMouseLocation.y;
     			if(isHelpPage==true) {
@@ -134,20 +155,22 @@ public class Board extends JPanel implements ActionListener{
     				}
     				return;
     			}
+    			
     			mousePrevLocation=currentMouseLocation;
     		}
     		
     		@Override
     		public void mouseReleased(MouseEvent e) {
     			Point currentMouseLocation=e.getPoint();
-    			if(draggedImage==null) return;
+    			if(draggedImage==null) return; //jika tidak ada shape yg di drag
     			boolean placed=false;
+    			//peletakan shape
     			for(int i=0;i<locations.size();i++) {
 	    			int x=currentMouseLocation.x-locations.get(i).x;
 	    			int y=currentMouseLocation.y-locations.get(i).y;
-	    			if(Math.sqrt(x*x+y*y)<20) {
-	    				if(places.get(i)!=null) {
-		    				for(int j=0;j<availableShapes.size();j++) {
+	    			if(Math.sqrt(x*x+y*y)<20) { //jika diletakkan di titik
+	    				if(places.get(i)!=null) { //jika ada shape di titik
+		    				for(int j=0;j<availableShapes.size();j++) { //shape dikembalikan ke tempatnya
 			    				if(availableShapes.get(j).getClass()==places.get(i).getClass()) {
 			    					countShapes.set(j, countShapes.get(j)+1);
 			    				}
@@ -159,7 +182,7 @@ public class Board extends JPanel implements ActionListener{
 	    				placed=true;
 	    			}	
     			}
-    			if(!placed) {
+    			if(!placed) { //jika diletakkan tidak di titik maka dikembalikan
 	    			for(int i=0;i<availableShapes.size();i++) {
 	    				if(availableShapes.get(i).getClass()==draggedImage.getClass()) {
 	    					countShapes.set(i, countShapes.get(i)+1);
@@ -184,6 +207,7 @@ public class Board extends JPanel implements ActionListener{
     	player = new MusicPlayer ();
     	choosedLevel=1;
     	initLevel();
+    	//buat koordinat meletakkan shape, button level
         shapePlaces = new ArrayList();
         shapePlaces.add(new Point(320,80));
         shapePlaces.add(new Point(400,80));
@@ -222,13 +246,14 @@ public class Board extends JPanel implements ActionListener{
     	availableShapes.add(new NinjaTurtle(shapePlaces.get(2).x,shapePlaces.get(2).y));
 
     	loadLevel();
-    	
+
+		Music();
     	setBackground(Color.DARK_GRAY);
         setFocusable(true);
         timer = new Timer(DELAY, this);
         timer.start();
         draggedImage=null;
-    	finish= new ArrayList();
+    	finish= new ArrayList(); //jika level sudah diselesaikan
     	for(int i=0;i<levels.size();i++) {
     		finish.add(false);
     	}
@@ -238,19 +263,17 @@ public class Board extends JPanel implements ActionListener{
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         doDrawing(g);
-
         Toolkit.getDefaultToolkit().sync();
     }
     
     void pageLevel(int thisLevel) {
 		choosedLevel=thisLevel;
-    	loadLevel();	
+    	loadLevel();	//load level sesuai level yg diminta
     }
     
     void nextLevel() {
-    	if(finish.get(choosedLevel)) {
+    	if(finish.get(choosedLevel)) { //kl blm selesai level sblmnya, tidak bisa lanjut
     		choosedLevel++;
         	choosedLevel%=levels.size();
         	loadLevel();	
@@ -280,19 +303,18 @@ public class Board extends JPanel implements ActionListener{
     	locations=(ArrayList<Point>)levels.get(choosedLevel).getLocations().clone();
     	edges=(ArrayList<Edge>)levels.get(choosedLevel).getEdges().clone();
 	}
+	
 	public void Music() {
-		if(musicPlayed) {
-			player.stop();
-		}
+		if(musicPlayed) player.stop();
 		else player.play();
 		musicPlayed=!musicPlayed;
 	}
     
     private void doDrawing(Graphics g) {
-    	Stroke stroke = new BasicStroke(4f);
+    	Stroke stroke = new BasicStroke(4f); //tebal garis
     	Stroke stroke2 = new BasicStroke(6f);
     	Stroke stroke3 = new BasicStroke(2f);
-        Font tr5 = new Font("Times New Roman", Font.BOLD, 80);
+        Font tr5 = new Font("Times New Roman", Font.BOLD, 80); //aturan font
         Font tr6 = new Font("Times New Roman", Font.BOLD, 50);
         Font tr4 = new Font("Times New Roman", Font.BOLD, 30);
         Font t1 = new Font("Times New Roman", Font.PLAIN, 30);
@@ -300,7 +322,7 @@ public class Board extends JPanel implements ActionListener{
         Font tr = new Font("Comic Sans", Font.BOLD, 26);
         Graphics2D g2d = (Graphics2D) g;
         
-        if(isMainPage) {
+        if(isMainPage) { //draw main page
         	g2d.setColor(Color.DARK_GRAY);
         	g2d.fillRect(0, 0, 800, 650);
         	g2d.setColor(Color.cyan);
@@ -327,16 +349,13 @@ public class Board extends JPanel implements ActionListener{
         	return;
         }
         
-        if(isLevelPage) {
+        if(isLevelPage) { //draw level page
         	g2d.setColor(Color.DARK_GRAY);
         	g2d.fillRect(0, 0, 800, 650);
             g2d.setFont(tr6);
-            
         	for(int i=0;i<levelLocations.size();i++) {
-        		if ((i%2==1||i==4||i==6)&&i!=5&&i!=7)
-        			g2d.setColor(Color.CYAN);
-        		else if (i%2==0 || i==5||i==7)
-                	g2d.setColor(Color.BLUE);
+        		if ((i%2==1||i==4||i==6)&&i!=5&&i!=7) g2d.setColor(Color.CYAN);
+        		else if (i%2==0 || i==5||i==7) g2d.setColor(Color.BLUE);
         		g2d.fillOval(levelLocations.get(i).x-40,levelLocations.get(i).y-40, 80, 80);
             	g2d.setColor(Color.white);
         		g2d.drawOval(levelLocations.get(i).x-40,levelLocations.get(i).y-40, 80, 80);
@@ -359,38 +378,40 @@ public class Board extends JPanel implements ActionListener{
         	return;
         }
         
+        //board game
         g2d.setStroke(stroke2);
-        g.setColor(Color.black);
+        g.setColor(Color.black); //atas
         g2d.fillRect(0, 0, 800, 140);
         
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(Color.LIGHT_GRAY); //batas
         g2d.drawLine(0, 140, 800, 140);
 
         g2d.setStroke(stroke);
         g.setColor(Color.white);
         int count=0;
-        for(int i=0;i<edges.size();i++) {
+        for(int i=0;i<edges.size();i++) { //buat garis
         	int key=edges.get(i).key;
         	int value=edges.get(i).value;
-        	if(places.get(key)==null || places.get(value)==null) {
+        	if(places.get(key)==null || places.get(value)==null) { //jika blm ada shape
         		g.setColor(Color.lightGray);
         	}
-        	else if(places.get(key).getClass()==places.get(value).getClass()) {
+        	else if(places.get(key).getClass()==places.get(value).getClass()) { //jika shape berseberangan sama
         		g.setColor(Color.RED);
         	}
         	else {
-        		g.setColor(Color.GREEN);
+        		g.setColor(Color.GREEN); //jika shape berbeda
         		count++;
         	}
     		g.drawLine(locations.get(key).x, locations.get(key).y,
     				locations.get(value).x,locations.get(value).y);
         }
         if(count==edges.size()) {
-        	finish.set(choosedLevel, true);
+        	finish.set(choosedLevel, true); //jika sudah benar semua
+        	nextLevel();
         }
         g.setColor(Color.white);
 
-        for(int i=0;i<places.size();i++) {
+        for(int i=0;i<places.size();i++) { //gambar titiknya
 	        if(places.get(i)==null) {
 	        	g2d.fillOval( locations.get(i).x-10,locations.get(i).y-10,20,20);
 	        }
@@ -399,9 +420,9 @@ public class Board extends JPanel implements ActionListener{
 	        			places.get(i).getY()-places.get(i).getHeight()/2,this);
 	        }
         }
-
         g2d.setFont(tkecil);
-        for(int i=0;i<countShapes.size();i++) {
+        
+        for(int i=0;i<countShapes.size();i++) { //koordinat tempat shape, gambar kotak pembatas dan jmlh shape
         	g.setColor(Color.DARK_GRAY);
     		g2d.setStroke(stroke3);
         	g2d.drawRect(availableShapes.get(i).getX()-availableShapes.get(i).getWidth()/2-1,
@@ -417,10 +438,11 @@ public class Board extends JPanel implements ActionListener{
             			availableShapes.get(i).getY()-availableShapes.get(i).getHeight()/2-3);
         	}
         }
-        if(draggedImage!=null) {
+        if(draggedImage!=null) { //draw image yg di drag
         	g2d.drawImage(draggedImage.getImage(),draggedImage.getX()-draggedImage.getWidth()/2,
         			draggedImage.getY()-draggedImage.getHeight()/2,this);
         }
+        //draw semua button icon
         ImageIcon iconRight = new ImageIcon("image/right.png");
         ImageIcon iconLeft = new ImageIcon("image/left.png");
         ImageIcon iconMusic = new ImageIcon("image/music-player.png");
@@ -438,14 +460,14 @@ public class Board extends JPanel implements ActionListener{
         	g.drawLine(musicButtonLocations.x-10, musicButtonLocations.y+20,musicButtonLocations.x+25, musicButtonLocations.y-10);
         }
         g.setColor(Color.white);
-      //tulisan level
+        
+        //tulisan level
         g.fillRect(0, 0, 120, 40);
         g2d.setFont(tr);
         g.setColor(Color.black);
         g2d.drawString("Level "+ (choosedLevel+1), 10, 30);
         
-        
-        if(isHelpPage) {
+        if(isHelpPage) { //how to play page
         	g2d.setColor(Color.white);
         	g2d.drawRect(questionButtonLocations.x+80,questionButtonLocations.y-20, 303,500);
             g2d.setFont(tr6);
@@ -453,7 +475,6 @@ public class Board extends JPanel implements ActionListener{
 	        howToPlay.paintIcon(this, g,questionButtonLocations.x+80,questionButtonLocations.y-20);
 	        return;
         }
-        
     }
     
 	@Override
@@ -461,7 +482,7 @@ public class Board extends JPanel implements ActionListener{
         repaint();
 	}
 	
-	void initLevel() {	
+	void initLevel() {	//inisialisasi level dari 1-12
 		levels = new ArrayList();
 		choosedLevel=0;
 //level 1		
@@ -924,7 +945,6 @@ public class Board extends JPanel implements ActionListener{
         edges.add(new Edge(9, 8));
         edges.add(new Edge(9, 12));
         levels.add(new Level(places,locations,edges,countShapes));
-
 //level 10
         countShapes=new ArrayList();
     	countShapes.add(7);
@@ -966,7 +986,6 @@ public class Board extends JPanel implements ActionListener{
     	locations.add(new Point(300,500));//13n
     	locations.add(new Point(350,350));//14o
     	locations.add(new Point(350,410));//15p
-//    	locations.add(new Point(350,310));//16q
 
         edges=new ArrayList();
         edges.add(new Edge(0, 1));
@@ -978,7 +997,6 @@ public class Board extends JPanel implements ActionListener{
         edges.add(new Edge(8, 6));
         edges.add(new Edge(8, 12));
         edges.add(new Edge(3, 9));
-        edges.add(new Edge(3, 4));
         edges.add(new Edge(4, 11));
         edges.add(new Edge(4, 10));
         edges.add(new Edge(4, 14));
@@ -991,7 +1009,6 @@ public class Board extends JPanel implements ActionListener{
         edges.add(new Edge(12, 13));
         edges.add(new Edge(12, 2));
         levels.add(new Level(places,locations,edges,countShapes));
-        
 //level 11
         countShapes=new ArrayList();
     	countShapes.add(8);
@@ -999,6 +1016,9 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(3);
     	
     	places=new ArrayList();
+    	places.add(null);
+    	places.add(null);
+    	places.add(null);
     	places.add(null);
     	places.add(null);
     	places.add(null);
@@ -1052,7 +1072,6 @@ public class Board extends JPanel implements ActionListener{
     	edges.add(new Edge(8, 6));
     	edges.add(new Edge(11, 14));
 		levels.add(new Level(places,locations,edges,countShapes));
-
 //level 12
         countShapes=new ArrayList();
     	countShapes.add(8);
@@ -1117,6 +1136,5 @@ public class Board extends JPanel implements ActionListener{
     	edges.add(new Edge(13, 11));
     	edges.add(new Edge(12, 9));
 		levels.add(new Level(places,locations,edges,countShapes));
-
 	}
 }
