@@ -20,7 +20,7 @@ Level dibuat secara manual. Terdapat 12 level yang masih bisa dimodifikasi denga
 
 ## Built With
 
-* Eclipse Application with Java language
+* Eclipse IDE with Java language
 * [Geogebra](https://geogebra.org/) for the Graph
 
 ## Contributing
