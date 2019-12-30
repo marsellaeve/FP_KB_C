@@ -42,6 +42,8 @@ public class Board extends JPanel implements ActionListener{
     private Point smurfButtonLocations;
     private Point grootButtonLocations;
     private Point turtleButtonLocations;
+    private Point appiesButtonLocations;
+    private Point sonicButtonLocations;
     private Point helpbackButtonLocations;
     private MusicPlayer player;
     private boolean musicPlayed;
@@ -209,17 +211,20 @@ public class Board extends JPanel implements ActionListener{
     	initLevel();
     	//buat koordinat meletakkan shape, button level
         shapePlaces = new ArrayList();
-        shapePlaces.add(new Point(320,80));
-        shapePlaces.add(new Point(400,80));
+        shapePlaces.add(new Point(240,80));
+        shapePlaces.add(new Point(300,80));
+        shapePlaces.add(new Point(360,80));
+        
+        shapePlaces.add(new Point(420,80));
         shapePlaces.add(new Point(480,80));
-
-        nextButtonLocations=new Point(720,80);
-        prevButtonLocations=new Point(80,80);
-        musicButtonLocations=new Point(640,80);
-        restartButtonLocations=new Point(560,80);
-        questionButtonLocations=new Point(160,78);
-        levelButtonLocations=new Point(240,78);
-        helpbackButtonLocations=new Point(393,518);
+        
+        prevButtonLocations=new Point(60,80);
+        questionButtonLocations=new Point(120,78);
+        levelButtonLocations=new Point(180,78);
+        helpbackButtonLocations=new Point(363,518);
+        restartButtonLocations=new Point(540,80);
+        musicButtonLocations=new Point(600,80);
+        nextButtonLocations=new Point(660,80);
         
         mainButtonLocations = new Point(400,500);
         grootButtonLocations = new Point(130,200);
@@ -244,6 +249,8 @@ public class Board extends JPanel implements ActionListener{
     	availableShapes.add(new Groot(shapePlaces.get(0).x,shapePlaces.get(0).y));
     	availableShapes.add(new Smurf(shapePlaces.get(1).x,shapePlaces.get(1).y));
     	availableShapes.add(new NinjaTurtle(shapePlaces.get(2).x,shapePlaces.get(2).y));
+    	availableShapes.add(new Sonic(shapePlaces.get(3).x,shapePlaces.get(3).y));
+    	availableShapes.add(new Appies(shapePlaces.get(4).x,shapePlaces.get(4).y));
 
     	loadLevel();
 
@@ -490,6 +497,8 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(1);
     	countShapes.add(1);
     	countShapes.add(1);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
         places=new ArrayList();
     	places.add(null);
@@ -509,7 +518,9 @@ public class Board extends JPanel implements ActionListener{
 		countShapes=new ArrayList();
     	countShapes.add(7);
     	countShapes.add(1);
-    	countShapes.add(4);
+    	countShapes.add(2);
+    	countShapes.add(1);
+    	countShapes.add(1);
     	
     	places=new ArrayList();
     	places.add(null);
@@ -558,8 +569,10 @@ public class Board extends JPanel implements ActionListener{
 //level 3		
 		countShapes=new ArrayList();
     	countShapes.add(5);
-    	countShapes.add(3);
-    	countShapes.add(4);
+    	countShapes.add(2);
+    	countShapes.add(2);
+    	countShapes.add(1);
+    	countShapes.add(2);
     	
         places=new ArrayList();
     	places.add(null);
@@ -613,7 +626,9 @@ public class Board extends JPanel implements ActionListener{
         countShapes=new ArrayList();
     	countShapes.add(4);
     	countShapes.add(2);
-    	countShapes.add(3);
+    	countShapes.add(1);
+    	countShapes.add(1);
+    	countShapes.add(1);
     	
         places=new ArrayList();
     	places.add(null);
@@ -662,6 +677,8 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(5);
     	countShapes.add(4);
     	countShapes.add(4);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
         places=new ArrayList();
     	places.add(null);
@@ -721,6 +738,8 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(4);
     	countShapes.add(3);
     	countShapes.add(3);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
         places=new ArrayList();
     	places.add(null);
@@ -771,6 +790,8 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(6);
     	countShapes.add(2);
     	countShapes.add(4);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
         places=new ArrayList();
     	places.add(null);
@@ -825,6 +846,8 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(5);
     	countShapes.add(4);
     	countShapes.add(4);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
         places=new ArrayList();
     	places.add(null);
@@ -887,6 +910,8 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(7);
     	countShapes.add(2);
     	countShapes.add(5);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
         places=new ArrayList();
     	places.add(null);
@@ -950,6 +975,8 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(7);
     	countShapes.add(7);
     	countShapes.add(2);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
         places=new ArrayList();
     	places.add(null);
@@ -1014,6 +1041,8 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(8);
     	countShapes.add(4);
     	countShapes.add(3);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
     	places=new ArrayList();
     	places.add(null);
@@ -1077,6 +1106,8 @@ public class Board extends JPanel implements ActionListener{
     	countShapes.add(8);
     	countShapes.add(4);
     	countShapes.add(3);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
     	places=new ArrayList();
     	places.add(null);
