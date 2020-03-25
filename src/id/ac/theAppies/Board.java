@@ -1,5 +1,6 @@
 package id.ac.theAppies;
 import java.lang.Math;
+import java.time.LocalDateTime;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -16,6 +17,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.util.*;
+import java.time.*;
 
 public class Board extends JPanel implements ActionListener{
 	private ArrayList<Level> levels;
@@ -27,6 +30,9 @@ public class Board extends JPanel implements ActionListener{
     private ArrayList<Shape> availableShapes;
     private ArrayList<Integer> countShapes;
     private ArrayList<Boolean> finish;
+    private int[] hint;
+    private int[] tandahint;
+    private Boolean hintComplete;
     private final int DELAY = 10;
     private Timer timer;
     private Shape draggedImage;
@@ -50,13 +56,15 @@ public class Board extends JPanel implements ActionListener{
     private boolean isHelpPage;
     private boolean isMainPage;
     private boolean isLevelPage;
+    private LocalDateTime waktuMulai;
+    private int hintFlag;
     
     public Board() {
         initBoard();
     }
-    
     private void initBoard() {
     	isMainPage=true;
+    	waktuMulai=LocalDateTime.now();
     	this.addMouseListener(new MouseAdapter() {
     		@Override
     		public void mousePressed(MouseEvent e) {
@@ -141,6 +149,15 @@ public class Board extends JPanel implements ActionListener{
     				Reload();
     			}
     			
+    			//hint
+    			x=795-currentMouseLocation.x;
+    			y=185-currentMouseLocation.y;
+    			if(x>=0&&x<=70&&y>=0&&y<=30) {
+    	        	if(!hintComplete)generateHint();
+    	        	processingHint(hintFlag);
+    	        	hintFlag++;
+    			}
+    			
     			//how to play button
     			x=questionButtonLocations.x-currentMouseLocation.x;
     			y=questionButtonLocations.y-currentMouseLocation.y;
@@ -211,20 +228,19 @@ public class Board extends JPanel implements ActionListener{
     	initLevel();
     	//buat koordinat meletakkan shape, button level
         shapePlaces = new ArrayList();
-        shapePlaces.add(new Point(240,80));
-        shapePlaces.add(new Point(300,80));
-        shapePlaces.add(new Point(360,80));
+        shapePlaces.add(new Point(260,80));
+        shapePlaces.add(new Point(325,80));
+        shapePlaces.add(new Point(390,80));
+        shapePlaces.add(new Point(455,80));
+        shapePlaces.add(new Point(520,80));
         
-        shapePlaces.add(new Point(420,80));
-        shapePlaces.add(new Point(480,80));
-        
-        prevButtonLocations=new Point(60,80);
-        questionButtonLocations=new Point(120,78);
-        levelButtonLocations=new Point(180,78);
+        prevButtonLocations=new Point(65,80);
+        questionButtonLocations=new Point(125,78);
+        levelButtonLocations=new Point(190,78);
+        restartButtonLocations=new Point(585,80);
+        musicButtonLocations=new Point(650,80);
+        nextButtonLocations=new Point(725,82);
         helpbackButtonLocations=new Point(363,518);
-        restartButtonLocations=new Point(540,80);
-        musicButtonLocations=new Point(600,80);
-        nextButtonLocations=new Point(660,80);
         
         mainButtonLocations = new Point(400,500);
         grootButtonLocations = new Point(130,200);
@@ -297,18 +313,84 @@ public class Board extends JPanel implements ActionListener{
     }
     
     void loadLevel() {
+    	hintComplete=false;
+    	hintFlag=0;
     	countShapes=(ArrayList<Integer>)levels.get(choosedLevel).getCountShapes().clone();
     	places=(ArrayList<Shape>)levels.get(choosedLevel).getPlaces().clone();
     	locations=(ArrayList<Point>)levels.get(choosedLevel).getLocations().clone();
     	edges=(ArrayList<Edge>)levels.get(choosedLevel).getEdges().clone();
-    	
+    	waktuMulai=LocalDateTime.now();
+    }
+    
+    void generateHint() {
+    	hint=new int[places.size()];
+    	for(int i=0;i<hint.length;i++) hint[i]=-1;
+    	hintComplete=false;
+    	generateHintBruteForce(0,(ArrayList<Integer>)countShapes.clone());
+//    	for(int i=0;i<hint.length;i++) {
+//        	if(hint[i]==0) {
+//        		processingHint(i);
+//        	}
+//        }
+    }
+    
+    void generateHintBruteForce(int node,ArrayList<Integer> color) {
+    	ArrayList<Integer> arr=new ArrayList<>();
+    	for(int i=0;i<color.size();i++) {
+    		for(int j=0;j<color.get(i);j++) {
+    			arr.add(i);
+    		}
+    	}
+    	Boolean[] availableColor=new Boolean[arr.size()];
+    	for(int i=0;i<arr.size();i++) availableColor[i]=true;
+    	hintUtil(0,arr,availableColor);
+//    	for(int i=0;i<hint.length;i++) {
+//    		System.out.println(hint[i]);
+//    	}
+    }
+    
+    void hintUtil(int depth,ArrayList<Integer> arr,Boolean[] availableColor) {
+    	if(depth==availableColor.length) {
+    		if(hintCheck()) this.hintComplete=true;
+    	}
+    	for(int i=0;i<availableColor.length;i++) {
+    		if(availableColor[i]) {
+    			hint[depth]=arr.get(i);
+    			availableColor[i]=false;
+    			hintUtil(depth+1,arr,availableColor);
+    			if(hintComplete) break;
+    			availableColor[i]=true;
+    		}
+    	}
+    }
+    Boolean hintCheck() {
+    	for(int i=0;i<this.edges.size();i++) {
+    		Edge edge=this.edges.get(i);
+    		if(this.hint[edge.key]==this.hint[edge.value]) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    void processingHint(int i) {
+    	Shape temp;
+    	if(places.get(i)!=null) { //jika ada shape di titik
+			for(int j=0;j<availableShapes.size();j++) { //shape dikembalikan ke tempatnya
+				if(availableShapes.get(j).getClass()==places.get(i).getClass()) {
+					countShapes.set(j, countShapes.get(j)+1);
+				}
+			}
+		}
+        temp=availableShapes.get(hint[i]).clone();
+    	places.set(i, temp);
+        countShapes.set(hint[i],countShapes.get(hint[i])-1);
+        temp.setX(locations.get(i).x);
+        temp.setY(locations.get(i).y);
+        temp=null;
     }
     
 	public void Reload() {
-		countShapes=(ArrayList<Integer>)levels.get(choosedLevel).getCountShapes().clone();
-    	places=(ArrayList<Shape>)levels.get(choosedLevel).getPlaces().clone();
-    	locations=(ArrayList<Point>)levels.get(choosedLevel).getLocations().clone();
-    	edges=(ArrayList<Edge>)levels.get(choosedLevel).getEdges().clone();
+		loadLevel();
 	}
 	
 	public void Music() {
@@ -318,6 +400,8 @@ public class Board extends JPanel implements ActionListener{
 	}
     
     private void doDrawing(Graphics g) {
+    	long detik=(Date.from(LocalDateTime.now().toInstant(OffsetDateTime.now().getOffset())).getTime()
+        		-Date.from(waktuMulai.toInstant(OffsetDateTime.now().getOffset())).getTime())/1000;
     	Stroke stroke = new BasicStroke(4f); //tebal garis
     	Stroke stroke2 = new BasicStroke(6f);
     	Stroke stroke3 = new BasicStroke(2f);
@@ -339,6 +423,7 @@ public class Board extends JPanel implements ActionListener{
             g2d.setFont(tr5);
         	g.drawString("The Appies",200,130);
             g2d.setFont(tr4);
+//            g.drawString(String.valueOf(detik),100,100);
         	g.drawString("Start",mainButtonLocations.x-30,mainButtonLocations.y+10);
             ImageIcon iconGroot = new ImageIcon("image/grootSedang.png");
             iconGroot.paintIcon(this, g,grootButtonLocations.x,grootButtonLocations.y);
@@ -382,6 +467,7 @@ public class Board extends JPanel implements ActionListener{
             g2d.setFont(tr6);
         	g2d.setColor(Color.white);
         	g.drawString("Choose Your Levels",190,100);
+//            g.drawString(String.valueOf(detik),100,100);
         	return;
         }
         
@@ -427,6 +513,13 @@ public class Board extends JPanel implements ActionListener{
 	        			places.get(i).getY()-places.get(i).getHeight()/2,this);
 	        }
         }
+        g2d.setFont(t1);
+    	g2d.drawRect( 740,-5, 100, 45);
+        g.drawString(String.valueOf(detik),750,30);
+
+    	g2d.setColor(Color.white);
+        g2d.setFont(tr);
+        g.drawString("Hint",725, 180);
         g2d.setFont(tkecil);
         
         for(int i=0;i<countShapes.size();i++) { //koordinat tempat shape, gambar kotak pembatas dan jmlh shape
@@ -462,6 +555,8 @@ public class Board extends JPanel implements ActionListener{
     	iconReload.paintIcon(this, g, restartButtonLocations.x-10,restartButtonLocations.y-10);
     	iconQuestion.paintIcon(this, g, questionButtonLocations.x-10,questionButtonLocations.y-10);
     	iconLevel.paintIcon(this, g, levelButtonLocations.x-12,levelButtonLocations.y-12);
+
+        
         if(!musicPlayed) {
         	g.setColor(Color.red);
         	g.drawLine(musicButtonLocations.x-10, musicButtonLocations.y+20,musicButtonLocations.x+25, musicButtonLocations.y-10);
@@ -514,17 +609,15 @@ public class Board extends JPanel implements ActionListener{
     	edges.add(new Edge(0, 1));
     	edges.add(new Edge(1, 2));
     	levels.add(new Level(places,locations,edges,countShapes));
-//level 2   	
+//level 6
 		countShapes=new ArrayList();
-    	countShapes.add(7);
-    	countShapes.add(1);
-    	countShapes.add(2);
-    	countShapes.add(1);
-    	countShapes.add(1);
+    	countShapes.add(4);
+    	countShapes.add(3);
+    	countShapes.add(3);
+    	countShapes.add(0);
+    	countShapes.add(0);
     	
-    	places=new ArrayList();
-    	places.add(null);
-    	places.add(null);
+        places=new ArrayList();
     	places.add(null);
     	places.add(null);
     	places.add(null);
@@ -536,35 +629,37 @@ public class Board extends JPanel implements ActionListener{
     	places.add(null);
     	places.add(null);
     	
-    	locations=new ArrayList();
-    	locations.add(new Point(250,300));
-    	locations.add(new Point(400,300));
-    	locations.add(new Point(400,450));
-    	locations.add(new Point(550,450));
-    	locations.add(new Point(400,225));
-    	locations.add(new Point(600,225));
-    	locations.add(new Point(250,500));
-    	locations.add(new Point(200,450));
-    	locations.add(new Point(250,400));
-    	locations.add(new Point(200,225));
-    	locations.add(new Point(500,400));
-    	locations.add(new Point(500,500));
-    	
-    	edges=new ArrayList();
-    	edges.add(new Edge(0, 1));
-    	edges.add(new Edge(0, 9));
-    	edges.add(new Edge(0, 2));
-    	edges.add(new Edge(0, 8));
-    	edges.add(new Edge(1, 2));
-    	edges.add(new Edge(1, 10));
-    	edges.add(new Edge(1, 4));
-    	edges.add(new Edge(2, 3));
-    	edges.add(new Edge(2, 7));
-    	edges.add(new Edge(3, 10));
-    	edges.add(new Edge(4, 5));
-    	edges.add(new Edge(6, 8));
-    	edges.add(new Edge(7, 8));
-    	edges.add(new Edge(10, 11));
+        locations=new ArrayList();
+        locations.add(new Point(250,460)); //0a
+    	locations.add(new Point(350,460)); //1b
+    	locations.add(new Point(450,460)); //2c
+    	locations.add(new Point(550,460)); //3d
+    	locations.add(new Point(300,380)); //4e
+    	locations.add(new Point(400,380)); //5f
+    	locations.add(new Point(500,380)); //6g
+    	locations.add(new Point(350,300)); //7h
+    	locations.add(new Point(450,300)); //8i
+    	locations.add(new Point(400,220)); //9j
+        
+        edges=new ArrayList();
+        edges.add(new Edge(0, 1));
+        edges.add(new Edge(0, 4));
+        edges.add(new Edge(1, 4));
+        edges.add(new Edge(1, 5));
+        edges.add(new Edge(1, 2));
+        edges.add(new Edge(2, 3));
+        edges.add(new Edge(2, 5));
+        edges.add(new Edge(2, 6));
+        edges.add(new Edge(3, 6));
+        edges.add(new Edge(4, 5));
+        edges.add(new Edge(4, 7));
+        edges.add(new Edge(5, 7));
+        edges.add(new Edge(5, 8));
+        edges.add(new Edge(5, 6));
+        edges.add(new Edge(6, 8));
+        edges.add(new Edge(7, 8));
+        edges.add(new Edge(7, 9));
+        edges.add(new Edge(8, 9));
 		levels.add(new Level(places,locations,edges,countShapes));
 //level 3		
 		countShapes=new ArrayList();
@@ -732,58 +827,6 @@ public class Board extends JPanel implements ActionListener{
         edges.add(new Edge(7,10));
         edges.add(new Edge(7,11));
         edges.add(new Edge(9,12));
-		levels.add(new Level(places,locations,edges,countShapes));
-//level 6
-		countShapes=new ArrayList();
-    	countShapes.add(4);
-    	countShapes.add(3);
-    	countShapes.add(3);
-    	countShapes.add(0);
-    	countShapes.add(0);
-    	
-        places=new ArrayList();
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	places.add(null);
-    	
-        locations=new ArrayList();
-        locations.add(new Point(250,460)); //0a
-    	locations.add(new Point(350,460)); //1b
-    	locations.add(new Point(450,460)); //2c
-    	locations.add(new Point(550,460)); //3d
-    	locations.add(new Point(300,380)); //4e
-    	locations.add(new Point(400,380)); //5f
-    	locations.add(new Point(500,380)); //6g
-    	locations.add(new Point(350,300)); //7h
-    	locations.add(new Point(450,300)); //8i
-    	locations.add(new Point(400,220)); //9j
-        
-        edges=new ArrayList();
-        edges.add(new Edge(0, 1));
-        edges.add(new Edge(0, 4));
-        edges.add(new Edge(1, 4));
-        edges.add(new Edge(1, 5));
-        edges.add(new Edge(1, 2));
-        edges.add(new Edge(2, 3));
-        edges.add(new Edge(2, 5));
-        edges.add(new Edge(2, 6));
-        edges.add(new Edge(3, 6));
-        edges.add(new Edge(4, 5));
-        edges.add(new Edge(4, 7));
-        edges.add(new Edge(5, 7));
-        edges.add(new Edge(5, 8));
-        edges.add(new Edge(5, 6));
-        edges.add(new Edge(6, 8));
-        edges.add(new Edge(7, 8));
-        edges.add(new Edge(7, 9));
-        edges.add(new Edge(8, 9));
 		levels.add(new Level(places,locations,edges,countShapes));
 //level 7
 		countShapes=new ArrayList();
@@ -1101,7 +1144,57 @@ public class Board extends JPanel implements ActionListener{
     	edges.add(new Edge(8, 6));
     	edges.add(new Edge(11, 14));
 		levels.add(new Level(places,locations,edges,countShapes));
-//level 12
+	//level 2   	
+			countShapes=new ArrayList();
+	    	countShapes.add(6);
+	    	countShapes.add(1);
+	    	countShapes.add(1);
+	    	countShapes.add(1);
+	    	countShapes.add(0);
+	    	
+	    	places=new ArrayList();
+	    	places.add(null);
+	    	places.add(null);
+	    	places.add(null);
+	    	places.add(null);
+	    	places.add(null);
+	    	places.add(null);
+	    	places.add(null);
+	    	places.add(null);
+	    	places.add(null);
+	    	
+	    	locations=new ArrayList();
+	    	locations.add(new Point(250,300));
+	    	locations.add(new Point(400,300));
+	    	locations.add(new Point(400,450));
+	    	locations.add(new Point(550,450));
+	    	locations.add(new Point(400,225));
+	    	locations.add(new Point(600,225));
+	    	locations.add(new Point(250,500));
+	    	locations.add(new Point(200,450));
+	    	locations.add(new Point(250,400));
+	    	locations.add(new Point(200,225));
+	    	locations.add(new Point(500,400));
+	    	locations.add(new Point(500,500));
+	    	
+	    	edges=new ArrayList();
+	    	edges.add(new Edge(0, 1));
+	    	edges.add(new Edge(0, 9));
+	    	edges.add(new Edge(0, 2));
+	    	edges.add(new Edge(0, 8));
+	    	edges.add(new Edge(1, 2));
+	    	edges.add(new Edge(1, 10));
+	    	edges.add(new Edge(1, 4));
+	    	edges.add(new Edge(2, 3));
+	    	edges.add(new Edge(2, 7));
+	    	edges.add(new Edge(3, 10));
+	    	edges.add(new Edge(4, 5));
+	    	edges.add(new Edge(6, 8));
+	    	edges.add(new Edge(7, 8));
+	    	edges.add(new Edge(10, 11));
+			levels.add(new Level(places,locations,edges,countShapes));
+
+		//level 12
         countShapes=new ArrayList();
     	countShapes.add(8);
     	countShapes.add(4);
