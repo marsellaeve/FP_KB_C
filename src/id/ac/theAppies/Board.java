@@ -153,9 +153,20 @@ public class Board extends JPanel implements ActionListener{
     			x=795-currentMouseLocation.x;
     			y=185-currentMouseLocation.y;
     			if(x>=0&&x<=70&&y>=0&&y<=30) {
-    	        	if(!hintComplete)generateHint();
-    	        	processingHint(hintFlag);
-    	        	hintFlag++;
+//    	        	if(!hintComplete)generateHint();
+//    	        	for(int i=0; i<places.size();i++) {
+//    	        		if(places.get(i)==null) {
+//    	        			hintFlag=i;
+            	        	processingHint();
+//            	        	hintFlag++;
+//            	        	break;
+//    	        		}
+//    	        		else {
+//    	        			if(places.get(i)==){
+//    	        				
+//    	        			}
+//    	        		}
+//    	        	}
     			}
     			
     			//how to play button
@@ -214,7 +225,7 @@ public class Board extends JPanel implements ActionListener{
     	this.addMouseMotionListener(new MouseAdapter() {
     		@Override
     		public void mouseDragged(MouseEvent e) {
-    			if(draggedImage!=null) {
+    			if(draggedImage!=null){
     				Point currentMouseLocation=e.getPoint();
     				draggedImage.addX(currentMouseLocation.x-mousePrevLocation.x);
     				draggedImage.addY(currentMouseLocation.y-mousePrevLocation.y);
@@ -269,7 +280,6 @@ public class Board extends JPanel implements ActionListener{
     	availableShapes.add(new Appies(shapePlaces.get(4).x,shapePlaces.get(4).y));
 
     	loadLevel();
-
 		Music();
     	setBackground(Color.DARK_GRAY);
         setFocusable(true);
@@ -320,6 +330,7 @@ public class Board extends JPanel implements ActionListener{
     	locations=(ArrayList<Point>)levels.get(choosedLevel).getLocations().clone();
     	edges=(ArrayList<Edge>)levels.get(choosedLevel).getEdges().clone();
     	waktuMulai=LocalDateTime.now();
+    	if(!hintComplete)generateHint();
     }
     
     void generateHint() {
@@ -372,21 +383,44 @@ public class Board extends JPanel implements ActionListener{
     	}
     	return true;
     }
-    void processingHint(int i) {
-    	Shape temp;
-    	if(places.get(i)!=null) { //jika ada shape di titik
-			for(int j=0;j<availableShapes.size();j++) { //shape dikembalikan ke tempatnya
-				if(availableShapes.get(j).getClass()==places.get(i).getClass()) {
-					countShapes.set(j, countShapes.get(j)+1);
-				}
-			}
-		}
-        temp=availableShapes.get(hint[i]).clone();
-    	places.set(i, temp);
-        countShapes.set(hint[i],countShapes.get(hint[i])-1);
-        temp.setX(locations.get(i).x);
-        temp.setY(locations.get(i).y);
-        temp=null;
+    void processingHint() {
+    	for(int i=0;i<locations.size();i++) {
+    		Shape temp; int poin=0;
+//			System.out.println(hint[i]);
+            if(places.get(i)!=null) { //jika ada shape di titik
+    			if(places.get(i).getClass()==availableShapes.get(hint[i]).getClass()) {
+//    				System.out.println("sama");
+    	    		continue;
+    			}
+    			else {
+    				for(int j=0;j<availableShapes.size();j++) { //shape dikembalikan ke tempatnya
+        				if(availableShapes.get(j).getClass()==places.get(i).getClass()) {
+        					countShapes.set(j, countShapes.get(j)+1);
+        				}
+        			}	
+    			}
+    		}
+            temp=availableShapes.get(hint[i]).clone();
+            places.set(i, temp);
+            countShapes.set(hint[i],countShapes.get(hint[i])-1);
+            temp.setX(locations.get(i).x);
+            temp.setY(locations.get(i).y);
+            temp=null;
+            if(countShapes.get(hint[i])<=0) {
+//				System.out.println("kurang");
+    			for(int k=i+1;k<places.size();k++) {
+    				if(places.get(k)!=null&&places.get(k).getClass()==availableShapes.get(hint[i]).getClass())
+    				for(int j=0;j<availableShapes.size();j++) { //shape dikembalikan ke tempatnya
+        				if(availableShapes.get(j).getClass()==places.get(k).getClass()) {
+        					countShapes.set(j, countShapes.get(j)+1); poin=1;
+        					places.set(k,null);
+        					break;
+        				}
+        			} if(poin==1) break;
+    			}
+    		}
+            break;
+    	}
     }
     
 	public void Reload() {
