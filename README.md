@@ -1,6 +1,6 @@
-# FP_PBO_F_GameTheAppies
+# FP_KB_C
 
-The Appies adalah game berbasis Object Oriented Programming dengan menggunakan drag n drop sebagai Final Project kelas Pemrograman Berbasis Objek.
+The Appies adalah game berbasis Object Oriented Programming dengan menggunakan drag n drop sebagai Final Project kelas Kecerdasan Buatan. Dalam game ini terdapat Hint yang akan membantu apabila pemain kesulitan.
 
 ## Cara Bermain
 
@@ -8,7 +8,7 @@ Beri label titik dengan Appie dengan menyeret Appie ke atasnya. Ditautkan ke App
 
 ### Fitur
 
-Terdapat fitur musik, reload, next level, back level, back Level Page, 3 karakter shape.
+Terdapat fitur musik, reload, next level, back level, back Level Page, 5 karakter shape, hint.
 
 ### Page
 
