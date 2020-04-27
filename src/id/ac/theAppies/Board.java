@@ -406,7 +406,7 @@ public class Board extends JPanel implements ActionListener{
             temp.setX(locations.get(i).x);
             temp.setY(locations.get(i).y);
             temp=null;
-            if(countShapes.get(hint[i])<=0) {
+            if(countShapes.get(hint[i])<0) {
 //				System.out.println("kurang");
     			for(int k=i+1;k<places.size();k++) {
     				if(places.get(k)!=null&&places.get(k).getClass()==availableShapes.get(hint[i]).getClass())
