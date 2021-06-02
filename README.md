@@ -1,4 +1,4 @@
-# FP_KB_C
+# The Appies
 
 The Appies adalah game berbasis Object Oriented Programming dengan menggunakan drag n drop sebagai Final Project kelas Kecerdasan Buatan. Dalam game ini terdapat Hint yang akan membantu apabila pemain kesulitan.
 
